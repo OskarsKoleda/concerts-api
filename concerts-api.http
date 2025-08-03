@@ -1,0 +1,19 @@
+###
+POST http://localhost:3000/user
+Content-Type: application/json
+
+{
+  "name": "Oskars Koleda",
+  "email": "oskars@gmail.com",
+  "age": 32,
+  "password": "123456"
+}
+
+###
+POST http://localhost:3000/auth
+Content-Type: application/json
+
+{
+  "email": "oskars@gmail.com",
+  "password": "123456"
+}

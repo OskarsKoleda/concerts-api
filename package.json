@@ -4,10 +4,11 @@
   "description": "",
   "license": "ISC",
   "author": "Oskars",
-  "type": "module",
+  "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon",
+    "dev": "cross-env NODE_ENV=development tsx watch src/app.ts",
+    "start": "cross-env NODE_ENV=production tsx src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
@@ -21,6 +22,7 @@
     "@types/node": "^24.1.0",
     "@typescript-eslint/eslint-plugin": "^8.38.0",
     "@typescript-eslint/parser": "^8.38.0",
+    "cross-env": "^10.0.0",
     "eslint": "^9.32.0",
     "eslint-import-resolver-typescript": "^4.4.4",
     "eslint-plugin-import": "^2.32.0",
@@ -28,12 +30,16 @@
     "prettier": "^3.6.2",
     "supertest": "^7.1.4",
     "ts-node": "^10.9.2",
+    "tsx": "^4.20.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.38.0"
   },
   "dependencies": {
+    "@types/cookie-parser": "^1.4.9",
     "bcrypt": "^6.0.0",
     "config": "^4.1.0",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
