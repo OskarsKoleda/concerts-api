@@ -4,7 +4,7 @@ import { Schema, model } from "mongoose";
 
 import { UserDocument } from "./user.types";
 
-const userSchema = new Schema({
+const userSchema = new Schema<UserDocument>({
   name: { type: String, required: true, minLength: 3, maxLength: 50 },
   age: {
     type: Number,
@@ -24,4 +24,4 @@ userSchema.methods.generateAuthToken = function (): string {
   return jwt.sign({ _id: this.id }, config.get("jwtPrivateKey"));
 };
 
-export default model<UserDocument>("User", userSchema);
+export const UserModel = model<UserDocument>("User", userSchema);

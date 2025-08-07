@@ -17,3 +17,19 @@ Content-Type: application/json
   "email": "oskars@gmail.com",
   "password": "123456"
 }
+
+
+###
+POST http://localhost:3000/events
+Content-Type: application/json
+
+{
+  "title": "Graspop 2023",
+  "category": "Music Festival",
+  "bands": ["Dethklok", "Slipknot"],
+  "city": "Desel",
+  "location": "Field",
+  "ticketPrice": 309,
+  "date": "2025-06-19",
+  "endDate": "2025-06-18"
+}

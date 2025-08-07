@@ -1,9 +1,9 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 
-import User from "../models/user.model";
-import { UserDocument } from "../models/user.types";
-import { validateUserSignup } from "../models/user.validation";
+import { UserModel } from "../models/user/user.model";
+import { UserDocument } from "../models/user/user.types";
+import { validateUserSignup } from "../models/user/user.validation";
 
 const SALT_ROUNDS = 12;
 
@@ -19,7 +19,9 @@ export const registerUser = async (
     return;
   }
 
-  let user: UserDocument | null = await User.findOne({ email: req.body.email });
+  let user: UserDocument | null = await UserModel.findOne({
+    email: req.body.email,
+  });
 
   if (user) {
     res.status(400).json({ message: "User already registered" });
@@ -29,7 +31,7 @@ export const registerUser = async (
 
   const { name, email, age, password } = req.body;
 
-  user = new User({
+  user = new UserModel({
     name,
     email,
     age,

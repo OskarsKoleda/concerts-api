@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 
 import { validateUserLogin } from "../models/auth.validation";
-import User from "../models/user.model";
+import { UserModel } from "../models/user/user.model";
 
 export const authorizeUser = async (
   req: Request,
@@ -16,7 +16,7 @@ export const authorizeUser = async (
     return;
   }
 
-  let user = await User.findOne({ email: req.body.email });
+  let user = await UserModel.findOne({ email: req.body.email });
 
   if (!user) {
     res.status(400).json({ message: "Invalid email or password" });

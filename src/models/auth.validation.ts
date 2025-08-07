@@ -1,6 +1,6 @@
 import Joi, { ValidationResult } from "joi";
 
-import { UserLoginFields } from "./user.types";
+import { UserLoginFields } from "./user/user.types";
 
 const validateUserLogin = (user: UserLoginFields): ValidationResult => {
   const schema = Joi.object({
@@ -12,4 +12,3 @@ const validateUserLogin = (user: UserLoginFields): ValidationResult => {
 };
 
 export { validateUserLogin };
-
