@@ -20,6 +20,9 @@ Content-Type: application/json
 
 
 ###
+GET http://localhost:3000/events
+
+###
 POST http://localhost:3000/events
 Content-Type: application/json
 

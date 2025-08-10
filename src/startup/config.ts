@@ -1,8 +1,8 @@
 import config from "config";
 
 export const setConfig = (): void => {
-  if (!config.get("jwtPrivateKey")) {
-    console.error("FATAL ERROR: jwtPrivateKey not provided");
+  if (!config.get("db")) {
+    console.error("FATAL ERROR: db not provided");
     process.exit(1);
   }
 };

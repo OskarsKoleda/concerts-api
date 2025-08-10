@@ -5,6 +5,11 @@ export enum EventCategory {
   CreativeEvening = "Creative Evening",
 }
 
+export type EventCreationFields = Omit<
+  EventModelFields,
+  "slug" | "publicId" | "url"
+>;
+
 export interface EventModelFields {
   title: string;
   slug: string;
@@ -15,6 +20,6 @@ export interface EventModelFields {
   ticketPrice?: number;
   date: Date;
   endDate?: Date;
+  publicId: string;
+  url: string;
 }
-
-export type EventCreationFields = Omit<EventModelFields, "slug">;

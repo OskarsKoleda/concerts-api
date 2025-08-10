@@ -85,6 +85,14 @@ const eventSchema = new Schema({
       },
     },
   },
+  publicId: {
+    type: String,
+    required: true,
+  },
+  url: {
+    type: String,
+    required: true,
+  },
 });
 
 eventSchema.pre("save", function (next) {

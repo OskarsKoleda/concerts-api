@@ -1,9 +1,12 @@
 import config from "config";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
-dotenv.config();
 
+dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
+
+import { setCloudinary } from "./startup/cloudinary";
 import { setConfig } from "./startup/config";
 import { connectDb } from "./startup/db";
 import registerRoutes from "./startup/routes";
@@ -11,9 +14,11 @@ import registerRoutes from "./startup/routes";
 const app = express();
 
 app.use(cookieParser());
+app.use(cors());
 
 async function startServer(): Promise<void> {
   setConfig();
+  setCloudinary();
   await connectDb();
 
   registerRoutes(app);
