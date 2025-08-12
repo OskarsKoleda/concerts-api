@@ -23,7 +23,7 @@ export const errorHandler = (
   }
 
   if (process.env.NODE_ENV === "development") {
-    console.log(err);
+    console.log("Internal server error: ", err);
   }
 
   res.status(500).send("Internal server error");

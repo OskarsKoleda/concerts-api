@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development tsx watch src/app.ts",
     "start": "cross-env NODE_ENV=production tsx src/app.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest test"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
@@ -21,6 +21,7 @@
     "@types/mongoose": "^5.11.96",
     "@types/multer": "^2.0.0",
     "@types/node": "^24.1.0",
+    "@types/supertest": "^6.0.3",
     "@typescript-eslint/eslint-plugin": "^8.38.0",
     "@typescript-eslint/parser": "^8.38.0",
     "cross-env": "^10.0.0",
@@ -30,6 +31,7 @@
     "jest": "^30.0.5",
     "prettier": "^3.6.2",
     "supertest": "^7.1.4",
+    "ts-jest": "^29.4.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3",

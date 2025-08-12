@@ -32,12 +32,14 @@ export const createEvent = async (
     throw new AppError("Title already exists", 409);
   }
 
-  if (req.file) {
-    const { public_id, secure_url } = await uploadImage(req.file.buffer);
-
-    req.body.publicId = public_id;
-    req.body.url = secure_url;
+  if (!req.file) {
+    throw new AppError("Image not provided", 400);
   }
+
+  const { public_id, secure_url } = await uploadImage(req.file.buffer);
+
+  req.body.publicId = public_id;
+  req.body.url = secure_url;
 
   const event = new EventModel(req.body);
 

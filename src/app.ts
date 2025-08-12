@@ -16,23 +16,17 @@ const app = express();
 app.use(cookieParser());
 app.use(cors());
 
-async function startServer(): Promise<void> {
-  setConfig();
-  setCloudinary();
-  await connectDb();
+connectDb();
+setConfig();
+setCloudinary();
+registerRoutes(app);
 
-  registerRoutes(app);
+const port: number = config.get("port") || 3000;
 
-  const port: number = config.get("port") || 3000;
-
-  app.listen(port, () => {
-    console.log(`Listening on port ${port}`);
-  });
-}
-
-startServer().catch((err) => {
-  console.error("Failed to start server:", err);
-  process.exit(1);
+const server = app.listen(port, () => {
+  console.log(`Listening on port ${port}`);
 });
 
-export default app;
+export { server };
+
+
