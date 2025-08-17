@@ -1,6 +1,9 @@
 import Joi, { ValidationResult } from "joi";
-import { MUSIC_CATEGORIES } from "./event.constants";
-import { EventCategory, EventCreationFields } from "./event.types";
+import {
+  EventCategory,
+  MUSIC_CATEGORIES,
+} from "../models/event/event.constants";
+import { EventCreationFields } from "../models/event/event.types";
 
 export const validateEvent = (event: EventCreationFields): ValidationResult => {
   const schema = Joi.object({

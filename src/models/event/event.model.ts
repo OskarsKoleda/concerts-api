@@ -1,8 +1,8 @@
 import { model, Schema } from "mongoose";
 import slugify from "slugify";
 
-import { MUSIC_CATEGORIES } from "./event.constants";
-import { EventCategory, EventModelFields } from "./event.types";
+import { EventCategory, MUSIC_CATEGORIES } from "./event.constants";
+import { EventModelFields } from "./event.types";
 
 const eventSchema = new Schema({
   title: {

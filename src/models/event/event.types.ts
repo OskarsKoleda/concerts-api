@@ -1,9 +1,6 @@
-export enum EventCategory {
-  MusicConcert = "Music Concert",
-  MusicFestival = "Music Festival",
-  Theater = "Theater",
-  CreativeEvening = "Creative Evening",
-}
+import { EventCategory } from "./event.constants";
+
+export type EventRecordFields = Omit<EventModelFields, "slug">;
 
 export type EventCreationFields = Omit<
   EventModelFields,
@@ -17,7 +14,7 @@ export interface EventModelFields {
   bands: string[];
   city: string;
   location?: string;
-  ticketPrice?: number;
+  ticketPrice: number;
   date: Date;
   endDate?: Date;
   publicId: string;

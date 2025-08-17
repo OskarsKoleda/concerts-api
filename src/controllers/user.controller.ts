@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 
 import { UserModel } from "../models/user/user.model";
 import { UserDocument } from "../models/user/user.types";
-import { validateUserSignup } from "../models/user/user.validation";
+import { validateUser } from "../RESTValidators/user.validator";
 
 const SALT_ROUNDS = 12;
 
@@ -11,7 +11,7 @@ export const registerUser = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { error } = validateUserSignup(req.body);
+  const { error } = validateUser(req.body);
 
   if (error) {
     res.status(400).json({ message: error.details[0].message });

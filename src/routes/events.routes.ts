@@ -6,6 +6,10 @@ import { upload } from "../middleware/file.middleware";
 const router = Router();
 
 router.get("/", asyncMiddleware(getEvents));
-router.post("/", upload.single("posterImage"), asyncMiddleware(createEvent));
+router.post(
+  "/",
+  upload.single("posterImage"),
+  asyncMiddleware(createEvent)
+);
 
 export default router;

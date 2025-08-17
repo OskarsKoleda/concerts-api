@@ -1,8 +1,7 @@
 import Joi, { ValidationResult } from "joi";
+import { UserModelFields } from "../models/user/user.types";
 
-import { UserModelFields } from "./user.types";
-
-export const validateUserSignup = (user: UserModelFields): ValidationResult => {
+export const validateUser = (user: UserModelFields): ValidationResult => {
   const schema = Joi.object({
     name: Joi.string().min(3).max(50).required(),
     email: Joi.string().min(5).max(50).required().email(),

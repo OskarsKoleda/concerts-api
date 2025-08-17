@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { Error as MongooseError } from "mongoose";
+import multer from "multer";
 import { AppError } from "../utils/AppError";
 
 export const errorHandler = (
@@ -20,6 +21,14 @@ export const errorHandler = (
     res.status(400).json({ message: Object.values(err.errors)[0].message });
 
     return;
+  }
+
+  if (err instanceof multer.MulterError) {
+    if (err.code === "LIMIT_FILE_SIZE") {
+      return res
+        .status(400)
+        .json({ message: "File too large. Max size is 2MB" });
+    }
   }
 
   if (process.env.NODE_ENV === "development") {

@@ -1,8 +1,8 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 
-import { validateUserLogin } from "../models/auth.validation";
 import { UserModel } from "../models/user/user.model";
+import { validateUserLogin } from "../RESTValidators/auth.validator";
 
 export const authorizeUser = async (
   req: Request,
