@@ -11,7 +11,7 @@ const mockedValidEvent: EventCreationFields = {
   date: new Date(),
 };
 
-describe("should return BAD REQUEST, when", () => {
+describe("validateEvent should fail event validation, when", () => {
   // TITLE
 
   it("title is a number", async () => {

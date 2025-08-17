@@ -5,7 +5,7 @@ import { Schema, model } from "mongoose";
 import { UserDocument } from "./user.types";
 
 const userSchema = new Schema<UserDocument>({
-  name: { type: String, required: true, minLength: 3, maxLength: 50 },
+  name: { type: String, required: true, minLength: 2, maxLength: 50 },
   age: {
     type: Number,
     required: true,
