@@ -14,30 +14,41 @@ const eventSchema = new Schema({
   slug: { type: String, unique: true },
   category: {
     type: String,
-    enum: Object.values(EventCategory),
     required: true,
+    enum: Object.values(EventCategory),
   },
   bands: {
     type: [String],
-    required: function (this: EventModelFields) {
-      return MUSIC_CATEGORIES.includes(
-        this.category as (typeof MUSIC_CATEGORIES)[number]
-      );
-    },
-    validate: {
-      validator: function (this: EventModelFields, bands: string[]) {
-        if (
-          MUSIC_CATEGORIES.includes(
-            this.category as (typeof MUSIC_CATEGORIES)[number]
-          )
-        ) {
-          return Array.isArray(bands) && bands.length > 0;
-        }
+    validate: [
+      {
+        validator: function (this: EventModelFields, bands: string[]) {
+          if (
+            MUSIC_CATEGORIES.includes(
+              this.category as (typeof MUSIC_CATEGORIES)[number]
+            )
+          ) {
+            return Array.isArray(bands) && bands.length > 0;
+          }
 
-        return true;
+          return true;
+        },
+        message: `For the event category ${EventCategory.MusicConcert} or ${EventCategory.MusicFestival}, bands cannot be empty`,
       },
-      message: `For the event category ${EventCategory.MusicConcert} or ${EventCategory.MusicFestival}, bands cannot be empty`,
-    },
+      {
+        validator: function (this: EventModelFields, bands: string[]) {
+          if (
+            !MUSIC_CATEGORIES.includes(
+              this.category as (typeof MUSIC_CATEGORIES)[number]
+            )
+          ) {
+            return !bands;
+          }
+
+          return true;
+        },
+        message: "Bands are only allowed for music categories",
+      },
+    ],
   },
   city: {
     type: String,
@@ -47,13 +58,12 @@ const eventSchema = new Schema({
   },
   location: {
     type: String,
-    required: false,
     minlength: 3,
     maxlength: 255,
   },
   ticketPrice: {
     type: Number,
-    required: false,
+    required: true,
     min: 0,
     max: 999,
   },
@@ -63,7 +73,6 @@ const eventSchema = new Schema({
   },
   endDate: {
     type: Date,
-    required: false,
     validate: {
       validator: function (this: EventModelFields, endDate: Date) {
         if (!endDate) {

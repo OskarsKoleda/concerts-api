@@ -28,7 +28,7 @@ Content-Type: application/json
 
 {
   "title": "Graspop 2023",
-  "category": "Music Festival",
+  "category": "Creative Evening",
   "bands": ["Dethklok", "Slipknot"],
   "city": "Desel",
   "location": "Field",

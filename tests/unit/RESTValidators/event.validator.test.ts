@@ -13,7 +13,6 @@ const mockedValidEvent: EventCreationFields = {
 
 describe("validateEvent should fail event validation, when", () => {
   // TITLE
-
   it("title is a number", async () => {
     const event = { ...mockedValidEvent, title: 1 } as any;
     const { error } = validateEvent(event);
@@ -50,7 +49,6 @@ describe("validateEvent should fail event validation, when", () => {
   });
 
   // CATEGORY
-
   it("invalid category provided", async () => {
     const event = { ...mockedValidEvent, category: "bad" as EventCategory };
     const { error } = validateEvent(event);
@@ -66,7 +64,6 @@ describe("validateEvent should fail event validation, when", () => {
   });
 
   // BANDS
-
   it("band name is not a string", async () => {
     const event = { ...mockedValidEvent, bands: [1] };
     const { error } = validateEvent(event as any);
@@ -139,7 +136,6 @@ describe("validateEvent should fail event validation, when", () => {
   });
 
   // CITY
-
   it("city is a number", async () => {
     const event = { ...mockedValidEvent, city: 1 };
     const { error } = validateEvent(event as any);
@@ -176,7 +172,6 @@ describe("validateEvent should fail event validation, when", () => {
   });
 
   // LOCATION
-
   it("location is a number", async () => {
     const event = { ...mockedValidEvent, location: 1 };
     const { error } = validateEvent(event as any);
@@ -199,7 +194,6 @@ describe("validateEvent should fail event validation, when", () => {
   });
 
   // TICKET PRICE
-
   it("ticketPrice is a string", async () => {
     const event = { ...mockedValidEvent, ticketPrice: "aaa" };
     const { error } = validateEvent(event as any);
