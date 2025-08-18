@@ -17,7 +17,6 @@ const mockedEvent = {
 
 describe("eventSchema should throw a validation error, when", () => {
   // TITLE
-
   it("title is missing", async () => {
     const { title, ...eventWithoutTitle } = mockedEvent;
     const event = new EventModel(eventWithoutTitle);
