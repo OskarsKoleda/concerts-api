@@ -7,6 +7,7 @@ import { validateUser } from "../RESTValidators/user.validator";
 
 const SALT_ROUNDS = 12;
 
+// TODO: rework with UserService
 export const registerUser = async (
   req: Request,
   res: Response

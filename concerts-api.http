@@ -23,16 +23,23 @@ Content-Type: application/json
 GET http://localhost:3000/events
 
 ###
+DELETE http://localhost:3000/events/ww
+
+###
+GET http://localhost:3000/events/fest-the-tons-metal
+
+###
 POST http://localhost:3000/events
 Content-Type: application/json
+# Content-Type: multipart/form-data
 
 {
   "title": "Graspop 2023",
-  "category": "Creative Evening",
+  "category": "Music Festival",
   "bands": ["Dethklok", "Slipknot"],
   "city": "Desel",
   "location": "Field",
   "ticketPrice": 309,
   "date": "2025-06-19",
-  "endDate": "2025-06-18"
+  "endDate": "2025-06-20"
 }

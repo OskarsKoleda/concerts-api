@@ -215,24 +215,4 @@ describe("eventSchema should throw a validation error, when", () => {
       "Start date is required when end date is provided"
     );
   });
-
-  // PUBLIC ID
-  it("publicId is missing", async () => {
-    const { publicId, ...eventDataWithoutPublicId } = mockedEvent;
-    const event = new EventModel(eventDataWithoutPublicId);
-
-    await expect(event.save()).rejects.toThrow(
-      "Event validation failed: publicId: Path `publicId` is required."
-    );
-  });
-
-  // URL
-  it("url is missing", async () => {
-    const { url, ...eventDataWithoutUrl } = mockedEvent;
-    const event = new EventModel(eventDataWithoutUrl);
-
-    await expect(event.save()).rejects.toThrow(
-      "Event validation failed: url: Path `url` is required."
-    );
-  });
 });

@@ -17,6 +17,6 @@ export interface EventModelFields {
   ticketPrice: number;
   date: Date;
   endDate?: Date;
-  publicId: string;
-  url: string;
+  publicId?: string;
+  url?: string;
 }

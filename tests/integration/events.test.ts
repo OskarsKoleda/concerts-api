@@ -51,17 +51,23 @@ describe("/api/events", () => {
     const mockedValidEvent = {
       title: "Title 1",
       category: EventCategory.MusicConcert,
-      bands: ["band1", "band2"],
+      bands: "band 1, band2",
       city: "Desel",
       ticketPrice: 309,
-      date: "2025-06-19",
+      date: new Date(),
     };
 
     const createEvent = async (event: any) => {
       return request(server).post("/events").send(event);
     };
 
-    it("title is a number", async () => {
+    it("should create an event when valid event data provided", async () => {
+      const res = await createEvent(mockedValidEvent);
+
+      expect(res.status).toBe(201);
+    });
+
+    it("should return BAD RESPONSE, when invalid event data provided", async () => {
       const event = { ...mockedValidEvent, title: 1 };
       const res = await createEvent(event);
 
