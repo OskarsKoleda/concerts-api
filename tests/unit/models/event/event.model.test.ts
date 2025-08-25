@@ -96,7 +96,7 @@ describe("eventSchema should throw a validation error, when", () => {
     }
   );
 
-  it.each([EventCategory.CreativeEvening, EventCategory.Theater])(
+  it.each([EventCategory.CreativeEvening, EventCategory.Theatre])(
     "bands provided for non-music category - %s",
     async (nonMusicCategory) => {
       const event = new EventModel({

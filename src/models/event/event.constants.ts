@@ -1,7 +1,7 @@
 export enum EventCategory {
   MusicConcert = "Music Concert",
   MusicFestival = "Music Festival",
-  Theater = "Theater",
+  Theatre = "Theatre",
   CreativeEvening = "Creative Evening",
 }
 

@@ -7,12 +7,16 @@ import { AppError } from "../utils/AppError";
 import { normalizeEventInput } from "../utils/normalize";
 import { destroyImage, uploadImage } from "./cloudinary/cloudinary.service";
 import {
-  createEventRecord,
-  deleteEvent,
+  createEventInDb,
+  deleteEventFromDb,
   ensureUniqueTitle,
-  getEvent,
+  getEventFromDb,
+  updateEventInDb,
 } from "./db/eventDB.service";
-import { validateEventRules } from "./validation/eventValidation.service";
+import {
+  validateEventCreateBody,
+  validateEventUpdatedBody,
+} from "./validation/eventValidation.service";
 
 import _ from "lodash";
 
@@ -23,7 +27,7 @@ export class EventService {
   ): Promise<EventModelFields> {
     normalizeEventInput(event);
 
-    validateEventRules(event);
+    validateEventCreateBody(event);
 
     await ensureUniqueTitle(event.title);
 
@@ -38,18 +42,18 @@ export class EventService {
       _.isNil
     ) as EventRecordFields;
 
-    return createEventRecord(cleanEvent);
+    return await createEventInDb(cleanEvent);
   }
 
   static async getEvent(slug: string): Promise<EventRecordFields> {
-    return await getEvent(slug);
+    return await getEventFromDb(slug);
   }
 
   static async deleteEvent(slug: string): Promise<boolean> {
-    const event = await getEvent(slug);
+    const event = await this.getEvent(slug);
     const posterPublicId: string | undefined = event.publicId;
 
-    const deleteEventResult = await deleteEvent(slug);
+    const deleteEventResult = await deleteEventFromDb(slug);
 
     if (!deleteEventResult) {
       throw new AppError("Could not delete the event", 500);
@@ -62,7 +66,35 @@ export class EventService {
     return true;
   }
 
-  // static async updatedEvent(slug: string) {
+  static async updateEvent(
+    slug: string,
+    event: Partial<EventCreationFields>,
+    file?: Express.Multer.File
+  ): Promise<EventRecordFields> {
+    normalizeEventInput(event);
 
-  // }
+    validateEventUpdatedBody(event);
+
+    if (event.title) {
+      await ensureUniqueTitle(event.title);
+    }
+
+    let fieldsToUpdate: Partial<EventModelFields> = { ...event };
+
+    if (file) {
+      const currentEvent = await this.getEvent(slug);
+      const posterPublicId: string | undefined = currentEvent.publicId;
+
+      if (posterPublicId) {
+        await destroyImage(posterPublicId);
+      }
+
+      const { public_id, secure_url } = await uploadImage(file);
+
+      fieldsToUpdate["publicId"] = public_id;
+      fieldsToUpdate["url"] = secure_url;
+    }
+
+    return await updateEventInDb(slug, fieldsToUpdate);
+  }
 }

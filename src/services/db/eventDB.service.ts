@@ -1,6 +1,7 @@
 import slugify from "slugify";
 import { EventModel } from "../../models/event/event.model";
 import {
+  EventCreationFields,
   EventModelFields,
   EventRecordFields,
 } from "../../models/event/event.types";
@@ -16,7 +17,7 @@ export const ensureUniqueTitle = async (title: string): Promise<void> => {
   }
 };
 
-export const createEventRecord = async (
+export const createEventInDb = async (
   data: EventRecordFields
 ): Promise<EventModelFields> => {
   const event = new EventModel(data);
@@ -26,8 +27,10 @@ export const createEventRecord = async (
   return event;
 };
 
-export const getEvent = async (slug: string): Promise<EventRecordFields> => {
-  const event = await EventModel.findOne({ slug }).select("-_id");
+export const getEventFromDb = async (
+  slug: string
+): Promise<EventRecordFields> => {
+  const event = await EventModel.findOne({ slug }).select("-_id").lean();
 
   if (!event) {
     throw new AppError("Event not found", 404);
@@ -36,7 +39,7 @@ export const getEvent = async (slug: string): Promise<EventRecordFields> => {
   return event;
 };
 
-export const deleteEvent = async (slug: string): Promise<boolean> => {
+export const deleteEventFromDb = async (slug: string): Promise<boolean> => {
   const event = await EventModel.findOne({ slug });
 
   if (!event) {
@@ -48,9 +51,21 @@ export const deleteEvent = async (slug: string): Promise<boolean> => {
   return deletedEvent.acknowledged;
 };
 
-// export const updateEvent = async (
-//   slug: string,
-//   event: Partial<EventCreationFields>
-// ) => {
-//   const event = EventModel.findOneAndUpdate({ slug: slug }, { $set: event });
-// };
+export const updateEventInDb = async (
+  slug: string,
+  event: Partial<EventCreationFields>
+): Promise<EventModelFields> => {
+  const updatedEvent = await EventModel.findOneAndUpdate(
+    { slug: slug },
+    { $set: event },
+    { new: true }
+  )
+    .select("-_id")
+    .lean();
+
+  if (!updatedEvent) {
+    throw new AppError("Event not found", 404);
+  }
+
+  return updatedEvent;
+};

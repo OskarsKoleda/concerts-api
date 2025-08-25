@@ -19,6 +19,7 @@ const eventSchema = new Schema({
   },
   bands: {
     type: [String],
+    default: undefined,
     validate: [
       {
         validator: function (this: EventModelFields, bands: string[]) {
