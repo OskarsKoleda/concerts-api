@@ -1,7 +1,7 @@
-import config from "config";
 import jwt from "jsonwebtoken";
 import { Schema, model } from "mongoose";
 
+import { AppError } from "../../utils/AppError";
 import { UserDocument } from "./user.types";
 
 const userSchema = new Schema<UserDocument>({
@@ -21,7 +21,14 @@ const userSchema = new Schema<UserDocument>({
 });
 
 userSchema.methods.generateAuthToken = function (): string {
-  return jwt.sign({ _id: this.id }, config.get("jwtPrivateKey"));
+  const jwtPrivateKey: string | undefined = process.env.JWT_PRIVATE_KEY;
+
+  // TODO: move to config
+  if (!jwtPrivateKey) {
+    throw new AppError("JWT private key not configured");
+  }
+
+  return jwt.sign({ _id: this.id }, jwtPrivateKey);
 };
 
 export const UserModel = model<UserDocument>("User", userSchema);

@@ -35,5 +35,5 @@ export const errorHandler = (
     console.log("Internal server error: ", err);
   }
 
-  res.status(500).send("Internal server error");
+  res.status(500).json({ message: "Internal server error" });
 };

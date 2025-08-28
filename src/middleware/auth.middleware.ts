@@ -1,10 +1,17 @@
-import config from "config";
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 
+import { AppError } from "../utils/AppError";
 import { AuthUserPayload } from "./auth.types";
 
 const auth = (req: Request, res: Response, next: NextFunction): void => {
+  const jwtPrivateKey: string | undefined = process.env.JWT_PRIVATE_KEY;
+
+  // TODO: move to config
+  if (!jwtPrivateKey) {
+    throw new AppError("JWT private key not configured");
+  }
+
   const token: string | undefined = req.cookies.token;
 
   if (!token) {
@@ -14,7 +21,7 @@ const auth = (req: Request, res: Response, next: NextFunction): void => {
   }
 
   try {
-    const decoded = jwt.verify(token, config.get("jwtPrivateKey"));
+    const decoded = jwt.verify(token, jwtPrivateKey);
 
     if (typeof decoded === "object" && decoded !== null && "_id" in decoded) {
       req.user = decoded as AuthUserPayload;

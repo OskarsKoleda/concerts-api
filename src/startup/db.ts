@@ -1,8 +1,7 @@
-import config from "config";
 import mongoose from "mongoose";
 
 export const connectDb = async (): Promise<void> => {
-  const db: string = config.get("db");
+  const db: string | undefined = process.env.DB;
 
   if (!db) {
     console.error("Fatal error: DB not set");
