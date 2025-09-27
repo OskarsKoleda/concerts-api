@@ -1,50 +1,13 @@
-import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 
-import { UserModel } from "../models/user/user.model";
-import { UserDocument } from "../models/user/user.types";
-import { validateUser } from "../RESTValidators/user.validator";
+import { UserService } from "../services/user.service";
 
-const SALT_ROUNDS = 12;
-
-// TODO: rework with UserService
 export const registerUser = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { error } = validateUser(req.body);
-
-  if (error) {
-    res.status(400).json({ message: error.details[0].message });
-
-    return;
-  }
-
-  let user: UserDocument | null = await UserModel.findOne({
-    email: req.body.email,
-  });
-
-  if (user) {
-    res.status(400).json({ message: "User already registered" });
-
-    return;
-  }
-
-  const { name, email, age, password } = req.body;
-
-  user = new UserModel({
-    name,
-    email,
-    age,
-    password,
-  });
-
-  const salt = await bcrypt.genSalt(SALT_ROUNDS);
-
-  user.password = await bcrypt.hash(user.password, salt);
-
-  await user.save();
-
+  const userData = req.body;
+  const user = await UserService.registerUser(userData);
   const token = user.generateAuthToken();
 
   res

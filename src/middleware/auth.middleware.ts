@@ -36,9 +36,9 @@ const auth = (req: Request, res: Response, next: NextFunction): void => {
     } else {
       console.error("JWT verification error occurred.");
     }
+
     res.status(400).json({ message: "Invalid token" });
   }
 };
 
 export { auth };
-

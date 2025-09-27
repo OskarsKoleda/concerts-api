@@ -1,8 +1,7 @@
 import { Document } from "mongoose";
 
-interface UserLoginFields {
-  email: string;
-  password: string;
+interface UserDocument extends UserModelFields, Document {
+  generateAuthToken(): string;
 }
 
 interface UserModelFields extends UserLoginFields {
@@ -10,9 +9,9 @@ interface UserModelFields extends UserLoginFields {
   age: number;
 }
 
-interface UserDocument extends UserModelFields, Document {
-  generateAuthToken(): string;
+interface UserLoginFields {
+  email: string;
+  password: string;
 }
 
 export { UserDocument, UserLoginFields, UserModelFields };
-
