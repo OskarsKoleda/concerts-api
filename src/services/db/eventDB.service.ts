@@ -6,6 +6,7 @@ import {
   EventRecordFields,
 } from "../../models/event/event.types";
 import { AppError } from "../../utils/AppError";
+import { EventQueryParams } from "../types";
 
 export const ensureUniqueTitle = async (title: string): Promise<void> => {
   const slug = slugify(title, { lower: true, strict: true });
@@ -25,6 +26,30 @@ export const createEventInDb = async (
   await event.save();
 
   return event;
+};
+
+export const getEventsFromDb = async (
+  params: EventQueryParams
+): Promise<EventRecordFields[]> => {
+  const eventFilter: Record<string, any> = {};
+
+  if (params.title) {
+    eventFilter.title = { $regex: params.title, $options: "i" };
+  }
+
+  if (params.city) {
+    eventFilter.city = { $regex: params.city, $options: "i" };
+  }
+
+  if (params.bands) {
+    eventFilter.bands = { $in: params.bands.split(",") };
+  }
+
+  const events = await EventModel.find(eventFilter)
+    .select("-_id -publicId")
+    .lean();
+
+  return events;
 };
 
 export const getEventFromDb = async (

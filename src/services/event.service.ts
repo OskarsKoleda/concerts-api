@@ -11,8 +11,10 @@ import {
   deleteEventFromDb,
   ensureUniqueTitle,
   getEventFromDb,
+  getEventsFromDb,
   updateEventInDb,
 } from "./db/eventDB.service";
+import { EventQueryParams } from "./types";
 import {
   validateEventCreateBody,
   validateEventUpdatedBody,
@@ -47,6 +49,12 @@ export class EventService {
 
   static async getEvent(slug: string): Promise<EventRecordFields> {
     return await getEventFromDb(slug);
+  }
+
+  static async getEvents(
+    params: EventQueryParams
+  ): Promise<EventRecordFields[]> {
+    return await getEventsFromDb(params);
   }
 
   static async deleteEvent(slug: string): Promise<boolean> {
