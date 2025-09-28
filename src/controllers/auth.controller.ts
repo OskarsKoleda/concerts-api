@@ -1,37 +1,13 @@
-import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 
-import { UserModel } from "../models/user/user.model";
-import { validateUserLogin } from "../RESTValidators/auth.validator";
+import { AuthService } from "../services/auth.service";
 
 export const authorizeUser = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { error } = validateUserLogin(req.body);
-
-  if (error) {
-    res.status(400).json({ message: error.details[0].message });
-
-    return;
-  }
-
-  let user = await UserModel.findOne({ email: req.body.email });
-
-  if (!user) {
-    res.status(400).json({ message: "Invalid email or password" });
-
-    return;
-  }
-
-  const validPassword = await bcrypt.compare(req.body.password, user.password);
-
-  if (!validPassword) {
-    res.status(400).json({ message: "Invalid email or password" });
-
-    return;
-  }
-
+  const userCredentials = req.body;
+  const user = await AuthService.login(userCredentials);
   const token = user.generateAuthToken();
 
   res
@@ -43,6 +19,7 @@ export const authorizeUser = async (
       maxAge: 3600000,
     })
     .json({
+      id: user._id,
       name: user.name,
       email: user.email,
       age: user.age,

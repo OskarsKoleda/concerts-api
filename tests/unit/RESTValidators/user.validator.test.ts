@@ -5,11 +5,11 @@ const mockedValidUser = {
   email: "john@email.com",
   age: 30,
   password: "Compl3xP@ssword",
+  repeatPassword: "Compl3xP@ssword",
 };
 
 describe("validateUser should fail validation, when", () => {
   // NAME
-
   it("name is not a string", () => {
     const user = { ...mockedValidUser, name: 1 };
     const { error } = validateUser(user as any);
@@ -35,7 +35,6 @@ describe("validateUser should fail validation, when", () => {
   });
 
   // EMAIL
-
   it("email is not a string", () => {
     const user = { ...mockedValidUser, email: 12345 };
     const { error } = validateUser(user as any);
@@ -67,7 +66,6 @@ describe("validateUser should fail validation, when", () => {
   });
 
   // AGE
-
   it("age is not a number", () => {
     const user = { ...mockedValidUser, age: "twenty" };
     const { error } = validateUser(user as any);
@@ -99,7 +97,6 @@ describe("validateUser should fail validation, when", () => {
   });
 
   // PASSWORD
-
   it("password is not a string", () => {
     const user = { ...mockedValidUser, password: 123456 };
     const { error } = validateUser(user as any);
@@ -122,5 +119,12 @@ describe("validateUser should fail validation, when", () => {
     const { password, ...userWithoutPassword } = mockedValidUser;
     const { error } = validateUser(userWithoutPassword as any);
     expect(error?.message).toBe("Password is required");
+  });
+
+  // REPEAT PASSWORD
+  it("repeatPassword is not a matching password", () => {
+    const user = { ...mockedValidUser, repeatPassword: "differentPassword" };
+    const { error } = validateUser(user as any);
+    expect(error?.message).toBe("Passwords do not match");
   });
 });

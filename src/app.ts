@@ -1,10 +1,10 @@
 import cookieParser from "cookie-parser";
-import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
+import { configureCors } from "./middleware/cors.middleware";
 import { setCloudinary } from "./startup/cloudinary";
 import { connectDb } from "./startup/db";
 import registerRoutes from "./startup/routes";
@@ -12,7 +12,7 @@ import registerRoutes from "./startup/routes";
 const app = express();
 
 app.use(cookieParser());
-app.use(cors());
+app.use(configureCors());
 
 connectDb();
 setCloudinary();
@@ -25,4 +25,3 @@ const server = app.listen(port, () => {
 });
 
 export { server };
-

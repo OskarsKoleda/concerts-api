@@ -18,5 +18,5 @@ export const registerUser = async (
       sameSite: "strict",
       maxAge: 3600000,
     })
-    .json({ _id: user._id, name: user.name, email: user.email, age: user.age });
+    .json({ id: user._id, name: user.name, email: user.email, age: user.age });
 };

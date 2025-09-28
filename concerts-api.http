@@ -4,9 +4,10 @@ Content-Type: application/json
 
 {
   "name": "Oskars",
-  "email": "ok1@gmail.com",
+  "email": "ok2@gmail.com",
   "age": 32,
-  "password": "123456"
+  "password": "123456",
+  "repeatPassword": "123456"
 }
 
 ###

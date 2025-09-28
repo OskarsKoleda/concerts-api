@@ -7,6 +7,7 @@ import {
   postEvent,
 } from "../controllers/event.controller";
 import { asyncMiddleware } from "../middleware/async.middleware";
+import { auth } from "../middleware/auth.middleware";
 import { upload } from "../middleware/file.middleware";
 
 const router = Router();
@@ -14,7 +15,7 @@ const router = Router();
 router.get("/", asyncMiddleware(getEvents));
 router.post("/", upload.single("posterImage"), asyncMiddleware(postEvent));
 router.get("/:slug", asyncMiddleware(getEvent));
-router.delete("/:slug", asyncMiddleware(deleteEvent));
+router.delete("/:slug", auth, asyncMiddleware(deleteEvent));
 router.patch(
   "/:slug",
   upload.single("posterImage"),
