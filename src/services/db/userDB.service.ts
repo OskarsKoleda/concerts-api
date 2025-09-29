@@ -24,3 +24,13 @@ export const createUserInDb = async (
 
   return user;
 };
+
+export const getUserFromDb = async (userId: string): Promise<UserDocument> => {
+  const user = await UserModel.findById(userId).select("-password -__v").lean();
+
+  if (!user) {
+    throw new AppError("User not found", 404);
+  }
+
+  return user;
+};

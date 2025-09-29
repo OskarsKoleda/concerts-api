@@ -45,6 +45,10 @@ export const getEventsFromDb = async (
     eventFilter.bands = { $in: params.bands.split(",") };
   }
 
+  if (params.category) {
+    eventFilter.category = params.category;
+  }
+
   const events = await EventModel.find(eventFilter)
     .select("-_id -publicId")
     .lean();

@@ -11,6 +11,10 @@ Content-Type: application/json
 }
 
 ###
+GET http://localhost:3000/user/me
+Cookie: token=<token>
+
+###
 POST http://localhost:3000/auth
 Content-Type: application/json
 

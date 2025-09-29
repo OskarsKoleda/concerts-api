@@ -9,19 +9,19 @@ export const ensureUserExists = async (
   const user = await UserModel.findOne({ email });
 
   if (!user) {
-    throw new AppError("Invalid email or password", 400);
+    throw new AppError("Invalid email or password", 401);
   }
 
   return user;
 };
 
 export const ensurePasswordIsValid = async (
-  providedPassword: string,
-  storedPassword: string
+  storedPassword: string,
+  providedPassword: string
 ): Promise<void> => {
   const validPassword = await bcrypt.compare(providedPassword, storedPassword);
 
   if (!validPassword) {
-    throw new AppError("Invalid email or password", 400);
+    throw new AppError("Invalid email or password", 401);
   }
 };

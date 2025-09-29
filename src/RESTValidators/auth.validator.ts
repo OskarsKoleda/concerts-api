@@ -8,6 +8,7 @@ const validateUserLogin = (user: UserLoginFields): ValidationResult => {
       "string.email": "Email must be a valid email address",
       "string.min": "Email must be at least 5 characters",
       "string.max": "Email must be at most 50 characters",
+      "string.empty": "Email cannot be empty",
       "any.required": "Email is required",
     }),
     password: Joi.string().min(6).max(1024).required().messages({
@@ -22,4 +23,3 @@ const validateUserLogin = (user: UserLoginFields): ValidationResult => {
 };
 
 export { validateUserLogin };
-
