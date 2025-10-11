@@ -1,6 +1,7 @@
-import { Document } from "mongoose";
+import { Document, mongo } from "mongoose";
 
 interface UserDocument extends UserModelFields, Document {
+  _id: mongo.ObjectId;
   generateAuthToken(): string;
 }
 

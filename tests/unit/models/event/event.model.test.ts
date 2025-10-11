@@ -1,8 +1,11 @@
+import mongoose from "mongoose";
 import {
   EventCategory,
   MUSIC_CATEGORIES,
 } from "../../../../src/models/event/event.constants";
 import { EventModel } from "../../../../src/models/event/event.model";
+
+const MOCK_OWNER_ID = new mongoose.Types.ObjectId("64b64c4f8f1a2c001f6e4b8a");
 
 const mockedEvent = {
   title: "My Concert 2025",
@@ -13,6 +16,7 @@ const mockedEvent = {
   date: "2025-12-31",
   publicId: 123,
   url: "www.poster.com",
+  ownerId: MOCK_OWNER_ID,
 };
 
 describe("eventSchema should throw a validation error, when", () => {
@@ -68,11 +72,10 @@ describe("eventSchema should throw a validation error, when", () => {
   it.each(MUSIC_CATEGORIES)(
     "bands is not provided for music category - %s",
     async (musicCategory) => {
-      const { bands, ...eventWithoutBands } = mockedEvent;
-
       const event = new EventModel({
-        ...eventWithoutBands,
+        ...mockedEvent,
         category: musicCategory,
+        bands: [],
       });
 
       await expect(event.save()).rejects.toThrow(
@@ -82,7 +85,7 @@ describe("eventSchema should throw a validation error, when", () => {
   );
 
   it.each(MUSIC_CATEGORIES)(
-    "bands is empty for music category - %s",
+    "bands is empty array for music category - %s",
     async (musicCategory) => {
       const event = new EventModel({
         ...mockedEvent,
@@ -101,7 +104,7 @@ describe("eventSchema should throw a validation error, when", () => {
     async (nonMusicCategory) => {
       const event = new EventModel({
         ...mockedEvent,
-        category: [nonMusicCategory],
+        category: nonMusicCategory,
       });
 
       await expect(event.save()).rejects.toThrow(

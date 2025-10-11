@@ -1,9 +1,10 @@
 import slugify from "slugify";
 import { EventModel } from "../../models/event/event.model";
 import {
-  EventCreationFields,
-  EventModelFields,
-  EventRecordFields,
+  EventDocument,
+  EventRecord,
+  EventResponse,
+  PopulatedEventDocument,
 } from "../../models/event/event.types";
 import { AppError } from "../../utils/AppError";
 import { EventQueryParams } from "../types";
@@ -19,18 +20,17 @@ export const ensureUniqueTitle = async (title: string): Promise<void> => {
 };
 
 export const createEventInDb = async (
-  data: EventRecordFields
-): Promise<EventModelFields> => {
+  data: EventRecord
+): Promise<EventDocument> => {
   const event = new EventModel(data);
+  const savedEvent = await event.save();
 
-  await event.save();
-
-  return event;
+  return savedEvent.toObject();
 };
 
 export const getEventsFromDb = async (
   params: EventQueryParams
-): Promise<EventRecordFields[]> => {
+): Promise<EventResponse[]> => {
   const eventFilter: Record<string, any> = {};
 
   if (params.title) {
@@ -50,22 +50,30 @@ export const getEventsFromDb = async (
   }
 
   const events = await EventModel.find(eventFilter)
-    .select("-_id -publicId")
-    .lean();
+    .populate({
+      path: "ownerId",
+      select: "name _id",
+    })
+    .lean<PopulatedEventDocument[]>();
 
-  return events;
+  return events.map(addOwnerToEvent);
 };
 
-export const getEventFromDb = async (
-  slug: string
-): Promise<EventRecordFields> => {
-  const event = await EventModel.findOne({ slug }).select("-_id").lean();
+export const getEventFromDb = async (slug: string): Promise<EventResponse> => {
+  const event = await EventModel.findOne({
+    slug,
+  })
+    .populate({
+      path: "ownerId",
+      select: "name _id",
+    })
+    .lean<PopulatedEventDocument>();
 
   if (!event) {
     throw new AppError("Event not found", 404);
   }
 
-  return event;
+  return addOwnerToEvent(event);
 };
 
 export const deleteEventFromDb = async (slug: string): Promise<boolean> => {
@@ -82,19 +90,34 @@ export const deleteEventFromDb = async (slug: string): Promise<boolean> => {
 
 export const updateEventInDb = async (
   slug: string,
-  event: Partial<EventCreationFields>
-): Promise<EventModelFields> => {
+  event: Partial<EventRecord>
+): Promise<EventResponse> => {
   const updatedEvent = await EventModel.findOneAndUpdate(
     { slug: slug },
     { $set: event },
     { new: true }
   )
-    .select("-_id")
-    .lean();
+    .populate({
+      path: "ownerId",
+      select: "name _id",
+    })
+    .lean<PopulatedEventDocument>();
 
   if (!updatedEvent) {
     throw new AppError("Event not found", 404);
   }
 
-  return updatedEvent;
+  return addOwnerToEvent(updatedEvent);
+};
+
+const addOwnerToEvent = (event: PopulatedEventDocument): EventResponse => {
+  const { ownerId, ...rest } = event;
+
+  return {
+    ...rest,
+    owner: {
+      id: ownerId._id,
+      name: ownerId.name,
+    },
+  };
 };

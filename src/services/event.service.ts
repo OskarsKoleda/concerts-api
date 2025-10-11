@@ -1,8 +1,11 @@
+import { AuthUserPayload } from "../middleware/auth.types";
 import {
-  EventCreationFields,
-  EventModelFields,
-  EventRecordFields,
+  CreateEventInput,
+  EventRecord,
+  EventResponse,
+  UpdateEventInput,
 } from "../models/event/event.types";
+import { UserDocument } from "../models/user/user.types";
 import { AppError } from "../utils/AppError";
 import { normalizeEventInput } from "../utils/normalize";
 import { destroyImage, uploadImage } from "./cloudinary/cloudinary.service";
@@ -15,6 +18,7 @@ import {
   updateEventInDb,
 } from "./db/eventDB.service";
 import { EventQueryParams } from "./types";
+import { UserService } from "./user.service";
 import {
   validateEventCreateBody,
   validateEventUpdatedBody,
@@ -24,36 +28,39 @@ import _ from "lodash";
 
 export class EventService {
   static async createEvent(
-    event: EventCreationFields,
+    event: CreateEventInput,
+    userData: AuthUserPayload,
     file?: Express.Multer.File
-  ): Promise<EventModelFields> {
+  ): Promise<EventResponse> {
     normalizeEventInput(event);
-
     validateEventCreateBody(event);
-
     await ensureUniqueTitle(event.title);
 
     const { public_id, secure_url } = await uploadImage(file);
+    const user: UserDocument = await UserService.getUser(userData._id);
 
-    const cleanEvent = _.omitBy(
-      {
-        ...event,
-        publicId: public_id,
-        url: secure_url,
-      },
-      _.isNil
-    ) as EventRecordFields;
+    const eventRecord: EventRecord = {
+      ...event,
+      publicId: public_id,
+      url: secure_url,
+      ownerId: user._id.toString(),
+    };
 
-    return await createEventInDb(cleanEvent);
+    const createdEvent = await createEventInDb(eventRecord);
+
+    return {
+      ..._.omit(createdEvent, "ownerId"),
+      owner: { id: user._id, name: user.name },
+    };
   }
 
-  static async getEvent(slug: string): Promise<EventRecordFields> {
-    return await getEventFromDb(slug);
+  static async getEvent(slug: string): Promise<EventResponse> {
+    const event = await getEventFromDb(slug);
+
+    return event;
   }
 
-  static async getEvents(
-    params: EventQueryParams
-  ): Promise<EventRecordFields[]> {
+  static async getEvents(params: EventQueryParams): Promise<EventResponse[]> {
     return await getEventsFromDb(params);
   }
 
@@ -76,18 +83,17 @@ export class EventService {
 
   static async updateEvent(
     slug: string,
-    event: Partial<EventCreationFields>,
+    event: UpdateEventInput,
     file?: Express.Multer.File
-  ): Promise<EventRecordFields> {
+  ): Promise<EventResponse> {
     normalizeEventInput(event);
-
     validateEventUpdatedBody(event);
 
     if (event.title) {
       await ensureUniqueTitle(event.title);
     }
 
-    let fieldsToUpdate: Partial<EventModelFields> = { ...event };
+    let fieldsToUpdate: Partial<EventRecord> = { ...event };
 
     if (file) {
       const currentEvent = await this.getEvent(slug);
@@ -99,8 +105,8 @@ export class EventService {
 
       const { public_id, secure_url } = await uploadImage(file);
 
-      fieldsToUpdate["publicId"] = public_id;
-      fieldsToUpdate["url"] = secure_url;
+      fieldsToUpdate.publicId = public_id;
+      fieldsToUpdate.url = secure_url;
     }
 
     return await updateEventInDb(slug, fieldsToUpdate);

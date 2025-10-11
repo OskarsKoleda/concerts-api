@@ -10,17 +10,14 @@ Content-Type: application/json
   "repeatPassword": "123456"
 }
 
-###
-GET http://localhost:3000/user/me
-Cookie: token=<token>
 
 ###
-POST http://localhost:3000/auth
+POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
-  "email": "oskars@gmail.com",
-  "password": "123456"
+  "email": "kkkk@gmail.com",
+  "password": "123123"
 }
 
 
@@ -31,15 +28,23 @@ GET http://localhost:3000/events?bands=alestorm
 DELETE http://localhost:3000/events/ww
 
 ###
-GET http://localhost:3000/events/fest-the-tons-metal
+GET http://localhost:3000/events/alestorm-european-tour-2023
 
 ###
+# @name login
+GET http://localhost:3000/user/me
+Cookie: token=<token>
+
+
+###
+@token = {{login.response.headers.Set-Cookie}}
 POST http://localhost:3000/events
 Content-Type: application/json
+Cookie: {{token}}
 # Content-Type: multipart/form-data
 
 {
-  "title": "Graspop 2023",
+  "title": "Graspop 223",
   "category": "Music Festival",
   "bands": ["Dethklok", "Slipknot"],
   "city": "Desel",

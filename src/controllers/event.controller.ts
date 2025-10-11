@@ -14,7 +14,15 @@ export const getEvents = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const postEvent = async (req: Request, res: Response): Promise<void> => {
-  const event = await EventService.createEvent(req.body, req.file);
+  const { body, user, file } = req;
+
+  if (!user) {
+    res.status(401).json({ message: "Unauthorized" });
+
+    return;
+  }
+
+  const event = await EventService.createEvent(body, user, file);
 
   res.status(201).json(event);
 };
@@ -23,11 +31,15 @@ export const patchEvent = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const result = await EventService.updateEvent(
-    req.params.slug,
-    req.body,
-    req.file
-  );
+  const { body, params, user, file } = req;
+
+  if (!user) {
+    res.status(401).json({ message: "Unauthorized" });
+
+    return;
+  }
+
+  const result = await EventService.updateEvent(params.slug, body, file);
 
   if (result) {
     res.status(200).json(result);

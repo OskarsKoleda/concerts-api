@@ -3,16 +3,16 @@ import {
   EventCategory,
   MUSIC_CATEGORIES,
 } from "../models/event/event.constants";
-import { EventCreationFields } from "../models/event/event.types";
+import { CreateEventInput } from "../models/event/event.types";
 
 export const validateEventPost = (
-  event: EventCreationFields
+  event: CreateEventInput
 ): ValidationResult => {
   return schema.validate(event);
 };
 
 export const validateEventPatch = (
-  event: Partial<EventCreationFields>
+  event: Partial<CreateEventInput>
 ): ValidationResult => {
   const patchSchema = schema.fork(
     Object.keys(schema.describe().keys),

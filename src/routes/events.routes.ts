@@ -13,11 +13,18 @@ import { upload } from "../middleware/file.middleware";
 const router = Router();
 
 router.get("/", asyncMiddleware(getEvents));
-router.post("/", upload.single("posterImage"), asyncMiddleware(postEvent));
+router.post(
+  "/",
+  auth,
+  upload.single("posterImage"),
+  asyncMiddleware(postEvent)
+);
+
 router.get("/:slug", asyncMiddleware(getEvent));
 router.delete("/:slug", auth, asyncMiddleware(deleteEvent));
 router.patch(
   "/:slug",
+  auth,
   upload.single("posterImage"),
   asyncMiddleware(patchEvent)
 );

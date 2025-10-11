@@ -2,7 +2,7 @@ import { model, Schema } from "mongoose";
 import slugify from "slugify";
 
 import { EventCategory, MUSIC_CATEGORIES } from "./event.constants";
-import { EventModelFields } from "./event.types";
+import { EventDocument } from "./event.types";
 
 const eventSchema = new Schema({
   title: {
@@ -20,9 +20,17 @@ const eventSchema = new Schema({
   bands: {
     type: [String],
     default: undefined,
+    required: [
+      function (this: EventDocument) {
+        return MUSIC_CATEGORIES.includes(
+          this.category as (typeof MUSIC_CATEGORIES)[number]
+        );
+      },
+      "Bands are required for music categories",
+    ],
     validate: [
       {
-        validator: function (this: EventModelFields, bands: string[]) {
+        validator: function (this: EventDocument, bands: string[]) {
           if (
             MUSIC_CATEGORIES.includes(
               this.category as (typeof MUSIC_CATEGORIES)[number]
@@ -36,7 +44,7 @@ const eventSchema = new Schema({
         message: `For the event category ${EventCategory.MusicConcert} or ${EventCategory.MusicFestival}, bands cannot be empty`,
       },
       {
-        validator: function (this: EventModelFields, bands: string[]) {
+        validator: function (this: EventDocument, bands: string[]) {
           if (
             !MUSIC_CATEGORIES.includes(
               this.category as (typeof MUSIC_CATEGORIES)[number]
@@ -75,7 +83,7 @@ const eventSchema = new Schema({
   endDate: {
     type: Date,
     validate: {
-      validator: function (this: EventModelFields, endDate: Date) {
+      validator: function (this: EventDocument, endDate: Date) {
         if (!endDate) {
           return true;
         }
@@ -101,6 +109,11 @@ const eventSchema = new Schema({
   url: {
     type: String,
   },
+  ownerId: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
 });
 
 eventSchema.pre("save", function (next) {
@@ -111,4 +124,4 @@ eventSchema.pre("save", function (next) {
   next();
 });
 
-export const EventModel = model<EventModelFields>("Event", eventSchema);
+export const EventModel = model<EventDocument>("Event", eventSchema);

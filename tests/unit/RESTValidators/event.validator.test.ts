@@ -1,8 +1,8 @@
 import { EventCategory } from "../../../src/models/event/event.constants";
-import { EventCreationFields } from "../../../src/models/event/event.types";
+import { CreateEventInput } from "../../../src/models/event/event.types";
 import { validateEventPost } from "../../../src/RESTValidators/event.validator";
 
-const mockedValidEvent: EventCreationFields = {
+const mockedValidEvent: CreateEventInput = {
   title: "Title 1",
   category: EventCategory.MusicConcert,
   bands: ["band1", "band2"],

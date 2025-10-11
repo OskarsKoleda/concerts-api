@@ -3,7 +3,7 @@ import request from "supertest";
 import { server } from "../../src/app"; // adjust path if needed
 import { EventCategory } from "../../src/models/event/event.constants";
 import { EventModel } from "../../src/models/event/event.model";
-import { EventModelFields } from "../../src/models/event/event.types";
+import { EventDocument } from "../../src/models/event/event.types";
 
 describe("/api/events", () => {
   afterEach(async () => {
@@ -38,11 +38,11 @@ describe("/api/events", () => {
       expect(res.body.length).toBe(2);
 
       expect(
-        res.body.some((event: EventModelFields) => event.title === "Title 1")
+        res.body.some((event: EventDocument) => event.title === "Title 1")
       ).toBeTruthy();
 
       expect(
-        res.body.some((event: EventModelFields) => event.title === "Title 2")
+        res.body.some((event: EventDocument) => event.title === "Title 2")
       ).toBeTruthy();
     });
   });

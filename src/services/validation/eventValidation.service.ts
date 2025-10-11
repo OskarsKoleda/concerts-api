@@ -1,11 +1,11 @@
-import { EventCreationFields } from "../../models/event/event.types";
+import { CreateEventInput } from "../../models/event/event.types";
 import {
   validateEventPatch,
   validateEventPost,
 } from "../../RESTValidators/event.validator";
 import { AppError } from "../../utils/AppError";
 
-export const validateEventCreateBody = (event: EventCreationFields) => {
+export const validateEventCreateBody = (event: CreateEventInput) => {
   const { error } = validateEventPost(event);
 
   if (error) {
@@ -16,9 +16,7 @@ export const validateEventCreateBody = (event: EventCreationFields) => {
   }
 };
 
-export const validateEventUpdatedBody = (
-  event: Partial<EventCreationFields>
-) => {
+export const validateEventUpdatedBody = (event: Partial<CreateEventInput>) => {
   const { error } = validateEventPatch(event);
 
   if (error) {
