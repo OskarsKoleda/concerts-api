@@ -1,6 +1,8 @@
+import slugify from "slugify";
 import { AuthUserPayload } from "../middleware/auth.types";
 import {
   CreateEventInput,
+  EventDocument,
   EventRecord,
   EventResponse,
   UpdateEventInput,
@@ -89,11 +91,12 @@ export class EventService {
     normalizeEventInput(event);
     validateEventUpdatedBody(event);
 
+    let fieldsToUpdate: Partial<EventDocument> = { ...event };
+
     if (event.title) {
       await ensureUniqueTitle(event.title);
+      fieldsToUpdate.slug = slugify(event.title, { lower: true, strict: true });
     }
-
-    let fieldsToUpdate: Partial<EventRecord> = { ...event };
 
     if (file) {
       const currentEvent = await this.getEvent(slug);
