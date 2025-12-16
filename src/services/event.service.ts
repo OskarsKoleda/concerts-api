@@ -12,6 +12,7 @@ import { AppError } from "../utils/AppError";
 import { normalizeEventInput } from "../utils/normalize";
 import { destroyImage, uploadImage } from "./cloudinary/cloudinary.service";
 import {
+  addVisitInDb,
   createEventInDb,
   deleteEventFromDb,
   ensureUniqueTitle,
@@ -113,5 +114,11 @@ export class EventService {
     }
 
     return await updateEventInDb(slug, fieldsToUpdate);
+  }
+
+  static async visitEvent(slug: string, userData: AuthUserPayload) {
+    // const event = await this.getEvent(slug);
+
+    addVisitInDb(slug, userData._id);
   }
 }

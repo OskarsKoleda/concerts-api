@@ -5,6 +5,7 @@ import {
   getEvents,
   patchEvent,
   postEvent,
+  visitEvent,
 } from "../controllers/event.controller";
 import { asyncMiddleware } from "../middleware/async.middleware";
 import { auth } from "../middleware/auth.middleware";
@@ -28,5 +29,7 @@ router.patch(
   upload.single("posterImage"),
   asyncMiddleware(patchEvent)
 );
+
+router.post("/:slug/visit", auth, asyncMiddleware(visitEvent));
 
 export default router;

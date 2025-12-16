@@ -27,6 +27,7 @@ export const postEvent = async (req: Request, res: Response): Promise<void> => {
   res.status(201).json(event);
 };
 
+// TODO: anyone can delete any event
 export const patchEvent = async (
   req: Request,
   res: Response
@@ -46,6 +47,7 @@ export const patchEvent = async (
   }
 };
 
+// TODO: anyone can delete any event
 export const deleteEvent = async (
   req: Request,
   res: Response
@@ -54,5 +56,18 @@ export const deleteEvent = async (
 
   if (result) {
     res.status(204).send();
+  }
+};
+
+export const visitEvent = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { params, user } = req;
+
+  if (!user) {
+    res.status(401).json({ message: "Unauthorized" });
+
+    return;
   }
 };
