@@ -5,6 +5,7 @@ import {
   getEvents,
   patchEvent,
   postEvent,
+  unvisitEvent,
   visitEvent,
 } from "../controllers/event.controller";
 import { asyncMiddleware } from "../middleware/async.middleware";
@@ -31,5 +32,6 @@ router.patch(
 );
 
 router.post("/:slug/visit", auth, asyncMiddleware(visitEvent));
+router.delete("/:slug/visit", auth, asyncMiddleware(unvisitEvent));
 
 export default router;

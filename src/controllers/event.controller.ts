@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { EventService } from "../services/event.service";
+import { VisitsService } from "../services/visits.service";
 
 export const getEvent = async (req: Request, res: Response): Promise<void> => {
   const { publicId, ...event } = await EventService.getEvent(req.params.slug);
@@ -27,7 +28,7 @@ export const postEvent = async (req: Request, res: Response): Promise<void> => {
   res.status(201).json(event);
 };
 
-// TODO: anyone can delete any event
+// TODO: anyone logged in can update any event
 export const patchEvent = async (
   req: Request,
   res: Response
@@ -47,7 +48,7 @@ export const patchEvent = async (
   }
 };
 
-// TODO: anyone can delete any event
+// TODO: anyone logged in can delete any event
 export const deleteEvent = async (
   req: Request,
   res: Response
@@ -70,4 +71,25 @@ export const visitEvent = async (
 
     return;
   }
+
+  await VisitsService.addVisit(params.slug, user._id);
+
+  res.status(204).send();
+};
+
+export const unvisitEvent = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { params, user } = req;
+
+  if (!user) {
+    res.status(401).json({ message: "Unauthorized" });
+
+    return;
+  }
+
+  await VisitsService.deleteVisit(params.slug, user._id);
+
+  res.status(204).send();
 };

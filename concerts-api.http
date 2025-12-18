@@ -1,17 +1,19 @@
 ###
+# @name createUser
 POST http://localhost:3000/user
 Content-Type: application/json
 
 {
-  "name": "Oskars",
-  "email": "ok2@gmail.com",
-  "age": 32,
-  "password": "123456",
-  "repeatPassword": "123456"
+  "name": "Oskars Koleda",
+  "email": "admin@gmail.com",
+  "age": 33,
+  "password": "123123",
+  "repeatPassword": "123123"
 }
 
 
 ###
+# @name login
 POST http://localhost:3000/auth/login
 Content-Type: application/json
 
@@ -20,9 +22,9 @@ Content-Type: application/json
   "password": "123123"
 }
 
-
 ###
-GET http://localhost:3000/events?bands=alestorm
+# @name logout
+POST http://localhost:3000/auth/logout 
 
 ###
 DELETE http://localhost:3000/events/ww
@@ -31,20 +33,15 @@ DELETE http://localhost:3000/events/ww
 GET http://localhost:3000/events/alestorm-european-tour-2023
 
 ###
-# @name login
 GET http://localhost:3000/user/me
-Cookie: token=<token>
 
 
 ###
-@token = {{login.response.headers.Set-Cookie}}
+# @name createEvent
 POST http://localhost:3000/events
 Content-Type: application/json
-Cookie: {{token}}
-# Content-Type: multipart/form-data
-
 {
-  "title": "Graspop 223",
+  "title": "Graspop ddw",
   "category": "Music Festival",
   "bands": ["Dethklok", "Slipknot"],
   "city": "Desel",
@@ -53,3 +50,26 @@ Cookie: {{token}}
   "date": "2025-06-19",
   "endDate": "2025-06-20"
 }
+
+###
+# @name updateEvent
+PATCH http://localhost:3000/events/alestorm-european-tour-2023
+Content-Type: application/json
+
+{
+  "ticketPrice": 500
+}
+
+###
+# @name deleteEvent
+DELETE http://localhost:3000/events/alestorm-european-tour-2023
+
+
+###
+# @name addVisit
+POST http://localhost:3000/events/alestorm-european-tour-2023/visit
+# Content-Type: application/json
+
+###
+# @name deleteVisit
+DELETE http://localhost:3000/events/alestorm-european-tour-2023/visit

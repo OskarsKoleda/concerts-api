@@ -121,7 +121,3 @@ const addOwnerToEvent = (event: PopulatedEventDocument): EventResponse => {
     },
   };
 };
-
-export const addVisitInDb = async (slug: string, userId: string) => {
-  const event = getEventFromDb(slug);
-};
