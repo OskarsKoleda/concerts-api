@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 import {
   EventCategory,
   MUSIC_CATEGORIES,
-} from "../../../../src/models/event/event.constants";
-import { EventModel } from "../../../../src/models/event/event.model";
+} from "../../../src/models/event/event.constants";
+import { EventModel } from "../../../src/models/event/event.model";
 
 const MOCK_OWNER_ID = new mongoose.Types.ObjectId("64b64c4f8f1a2c001f6e4b8a");
 

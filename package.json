@@ -7,9 +7,9 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development tsx watch src/app.ts",
-    "start": "cross-env NODE_ENV=production tsx src/app.ts",
-    "test": "jest test"
+    "dev": "cross-env NODE_ENV=development tsx watch src/server.ts",
+    "start": "cross-env NODE_ENV=production tsx src/server.ts",
+    "test": "cross-env NODE_ENV=test jest test"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",

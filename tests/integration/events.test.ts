@@ -1,10 +1,14 @@
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.test" });
+
 import mongoose from "mongoose";
 import request from "supertest";
-import { server } from "../../src/app";
+import { app } from "../../src/app";
 import { EventCategory } from "../../src/models/event/event.constants";
 import { EventModel } from "../../src/models/event/event.model";
 import { EventDocument } from "../../src/models/event/event.types";
 import { UserModel } from "../../src/models/user/user.model";
+import { connectDb } from "../../src/startup/db";
 
 const mockedUser = {
   name: "Test User",
@@ -19,6 +23,7 @@ describe("/api/events", () => {
   let mockedEventToInsert: any;
 
   beforeAll(async () => {
+    await connectDb();
     const user = await UserModel.create(mockedUser);
 
     mockedOwnerId = user._id;
@@ -43,7 +48,6 @@ describe("/api/events", () => {
   afterAll(async () => {
     await UserModel.deleteMany({});
     mongoose.connection.close();
-    server.close();
   });
 
   describe("GET /", () => {
@@ -53,7 +57,7 @@ describe("/api/events", () => {
         { ...mockedEventToInsert, title: "Title 2", slug: "title-2" },
       ]);
 
-      const { body, status } = await request(server).get("/events");
+      const { body, status } = await request(app).get("/events");
 
       expect(status).toBe(200);
       expect(body.length).toBe(2);
@@ -73,7 +77,7 @@ describe("/api/events", () => {
         { ...mockedEventToInsert, title: "Title 4", slug: "title-4" },
       ]);
 
-      const { body, status } = await request(server)
+      const { body, status } = await request(app)
         .get("/events")
         .query({ title: "Title 4" });
 
@@ -99,7 +103,7 @@ describe("/api/events", () => {
 
       await EventModel.create(mockedEvent);
 
-      const { status, body } = await request(server).get("/events/title-1");
+      const { status, body } = await request(app).get("/events/title-1");
 
       expect(status).toBe(200);
       expect(body.title).toBe(mockedEvent.title);
@@ -116,7 +120,7 @@ describe("/api/events", () => {
     });
 
     it("should return NOT FOUND when no events in db", async () => {
-      const { body, status } = await request(server).get("/events/bad-event");
+      const { body, status } = await request(app).get("/events/bad-event");
 
       expect(status).toBe(404);
       expect(body.message).toBe("Event not found");
@@ -134,7 +138,7 @@ describe("/api/events", () => {
     };
 
     const createEvent = async (event: any) => {
-      return await request(server)
+      return await request(app)
         .post("/events")
         .set("Cookie", [`token=${token}`])
         .send(event);
@@ -174,7 +178,7 @@ describe("/api/events", () => {
     });
 
     it("should return UNAUTHORIZED when no token is provided", async () => {
-      const { body, status } = await request(server)
+      const { body, status } = await request(app)
         .post("/events")
         .send(mockedValidEvent);
 
@@ -187,7 +191,7 @@ describe("/api/events", () => {
     it("should return NO CONTENT when valid slug is passed", async () => {
       await EventModel.create(mockedEventToInsert);
 
-      const { status } = await request(server)
+      const { status } = await request(app)
         .delete("/events/title-1")
         .set("Cookie", [`token=${token}`]);
 
@@ -197,14 +201,14 @@ describe("/api/events", () => {
     it("should return UNAUTHORIZED when no token is provided", async () => {
       await EventModel.create(mockedEventToInsert);
 
-      const { body, status } = await request(server).delete("/events/title-1");
+      const { body, status } = await request(app).delete("/events/title-1");
 
       expect(status).toBe(401);
       expect(body.message).toBe("Access denied. No token provided.");
     });
 
     it("should return NOT FOUND when event does not exist", async () => {
-      const { body, status } = await request(server)
+      const { body, status } = await request(app)
         .delete("/events/bad-title")
         .set("Cookie", [`token=${token}`]);
 
@@ -218,7 +222,7 @@ describe("/api/events", () => {
 
       const updatedEventData = { title: "Updated Title" };
 
-      const { body, status } = await request(server)
+      const { body, status } = await request(app)
         .patch("/events/title-1")
         .set("Cookie", [`token=${token}`])
         .send(updatedEventData);
@@ -233,7 +237,7 @@ describe("/api/events", () => {
 
       const updatedEventData = { title: mockedEventToInsert.title };
 
-      const { body, status } = await request(server)
+      const { body, status } = await request(app)
         .patch(`/events/${mockedEventToInsert.slug}`)
         .set("Cookie", [`token=${token}`])
         .send(updatedEventData);
@@ -246,7 +250,7 @@ describe("/api/events", () => {
       await EventModel.create(mockedEventToInsert);
 
       const updatedEventData = { title: "Updated Title" };
-      const { body, status } = await request(server)
+      const { body, status } = await request(app)
         .patch("/events/title-1")
         .send(updatedEventData);
 
