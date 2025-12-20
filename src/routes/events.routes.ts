@@ -14,7 +14,7 @@ import { upload } from "../middleware/file.middleware";
 
 const router = Router();
 
-router.get("/", asyncMiddleware(getEvents));
+router.get("/", auth, asyncMiddleware(getEvents));
 router.post(
   "/",
   auth,
@@ -22,7 +22,7 @@ router.post(
   asyncMiddleware(postEvent)
 );
 
-router.get("/:slug", asyncMiddleware(getEvent));
+router.get("/:slug", auth, asyncMiddleware(getEvent));
 router.delete("/:slug", auth, asyncMiddleware(deleteEvent));
 router.patch(
   "/:slug",

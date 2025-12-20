@@ -57,7 +57,9 @@ describe("/api/events", () => {
         { ...mockedEventToInsert, title: "Title 2", slug: "title-2" },
       ]);
 
-      const { body, status } = await request(app).get("/events");
+      const { body, status } = await request(app)
+        .get("/events")
+        .set("Cookie", [`token=${token}`]);
 
       expect(status).toBe(200);
       expect(body.length).toBe(2);
@@ -79,7 +81,8 @@ describe("/api/events", () => {
 
       const { body, status } = await request(app)
         .get("/events")
-        .query({ title: "Title 4" });
+        .query({ title: "Title 4" })
+        .set("Cookie", [`token=${token}`]);
 
       expect(status).toBe(200);
       expect(body.length).toBe(1);
@@ -103,7 +106,9 @@ describe("/api/events", () => {
 
       await EventModel.create(mockedEvent);
 
-      const { status, body } = await request(app).get("/events/title-1");
+      const { status, body } = await request(app)
+        .get("/events/title-1")
+        .set("Cookie", [`token=${token}`]);
 
       expect(status).toBe(200);
       expect(body.title).toBe(mockedEvent.title);
@@ -120,7 +125,9 @@ describe("/api/events", () => {
     });
 
     it("should return NOT FOUND when no events in db", async () => {
-      const { body, status } = await request(app).get("/events/bad-event");
+      const { body, status } = await request(app)
+        .get("/events/bad-event")
+        .set("Cookie", [`token=${token}`]);
 
       expect(status).toBe(404);
       expect(body.message).toBe("Event not found");
