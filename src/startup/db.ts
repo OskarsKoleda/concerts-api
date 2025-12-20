@@ -1,15 +1,9 @@
 import mongoose from "mongoose";
+import { config } from "./validateConfig";
 
 export const connectDb = async (): Promise<void> => {
-  const db: string | undefined = process.env.DB;
-
-  if (!db) {
-    console.error("Fatal error: DB not set");
-    process.exit(1);
-  }
-
   try {
-    await mongoose.connect(db);
+    await mongoose.connect(config.mongoUri);
     console.log("Successfully connected to the database.");
   } catch (err) {
     console.error("Failed to connect to DB:", err);

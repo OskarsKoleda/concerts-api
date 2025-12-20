@@ -1,19 +1,19 @@
-import dotenv from "dotenv";
-dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
+import "./bootstrap";
 
 import { app } from "./app";
 import { setCloudinary } from "./startup/cloudinary";
 import { connectDb } from "./startup/db";
+import { config, validateConfig } from "./startup/validateConfig";
 
-const port = process.env.PORT || 3000;
+validateConfig();
 
 const startServer = async () => {
   await connectDb();
   setCloudinary();
 
-  app.listen(port, () => {
-    console.log(`Listening on port ${port}`);
-  });
+  app.listen(config.port, () =>
+    console.log(`Listening on port ${config.port}`)
+  );
 };
 
 startServer();
