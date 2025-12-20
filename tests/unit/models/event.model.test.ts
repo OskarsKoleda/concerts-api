@@ -16,7 +16,7 @@ const mockedEvent = {
   date: "2025-12-31",
   publicId: 123,
   url: "www.poster.com",
-  ownerId: MOCK_OWNER_ID,
+  owner: MOCK_OWNER_ID,
 };
 
 describe("eventSchema should throw a validation error, when", () => {

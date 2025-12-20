@@ -40,8 +40,9 @@ GET http://localhost:3000/user/me
 # @name createEvent
 POST http://localhost:3000/events
 Content-Type: application/json
+
 {
-  "title": "Graspop ddw",
+  "title": "Graspop 9991",
   "category": "Music Festival",
   "bands": ["Dethklok", "Slipknot"],
   "city": "Desel",

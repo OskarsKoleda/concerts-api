@@ -15,32 +15,25 @@ export interface EventDocument {
   endDate?: Date;
   publicId?: string;
   url?: string;
-  ownerId: string;
+  owner: string;
 }
 
-export interface PopulatedEventDocument extends Omit<EventDocument, "ownerId"> {
-  ownerId: {
+// 2. Response layer - what's sent back to the client
+export interface PopulatedEventDocument extends Omit<EventDocument, "owner"> {
+  owner: {
     _id: mongo.ObjectId;
     name: string;
   };
 }
 
-// 2. Input layer - what comes from the client (for creation)
+// 3. Input layer - what comes from the client (for creation)
 export type CreateEventInput = Omit<
   EventDocument,
-  "slug" | "publicId" | "url" | "ownerId"
+  "slug" | "publicId" | "url" | "owner"
 >;
 
-// 3. Update layer - what comes from the client (for updates)
+// 4. Update layer - what comes from the client (for update)
 export type UpdateEventInput = Partial<CreateEventInput>;
-
-// 4. Response layer - what's sent back to the client
-export interface EventResponse extends Omit<EventDocument, "ownerId"> {
-  owner: {
-    id: string;
-    name: string;
-  };
-}
 
 // 5. Database operations - what's inserted/updated in DB
 export type EventRecord = Omit<EventDocument, "slug">;

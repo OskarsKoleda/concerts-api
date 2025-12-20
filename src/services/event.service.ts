@@ -4,7 +4,7 @@ import {
   CreateEventInput,
   EventDocument,
   EventRecord,
-  EventResponse,
+  PopulatedEventDocument,
   UpdateEventInput,
 } from "../models/event/event.types";
 import { AppError } from "../utils/AppError";
@@ -24,14 +24,12 @@ import {
   validateEventUpdatedBody,
 } from "./validation/eventValidation.service";
 
-import _ from "lodash";
-
 export class EventService {
   static async createEvent(
     event: CreateEventInput,
     userData: AuthUserPayload,
     file?: Express.Multer.File
-  ): Promise<EventResponse> {
+  ): Promise<PopulatedEventDocument> {
     normalizeEventInput(event);
     validateEventCreateBody(event);
     await ensureUniqueTitle(event.title);
@@ -42,24 +40,23 @@ export class EventService {
       ...event,
       publicId: public_id,
       url: secure_url,
-      ownerId: userData._id,
+      owner: userData._id,
     };
 
     const createdEvent = await createEventInDb(eventRecord);
 
-    return {
-      ..._.omit(createdEvent, "ownerId"),
-      owner: { id: userData._id, name: userData.name },
-    };
+    return createdEvent;
   }
 
-  static async getEvent(slug: string): Promise<EventResponse> {
+  static async getEvent(slug: string): Promise<PopulatedEventDocument> {
     const event = await getEventFromDb(slug);
 
     return event;
   }
 
-  static async getEvents(params: EventQueryParams): Promise<EventResponse[]> {
+  static async getEvents(
+    params: EventQueryParams
+  ): Promise<PopulatedEventDocument[]> {
     return await getEventsFromDb(params);
   }
 
@@ -84,7 +81,7 @@ export class EventService {
     slug: string,
     event: UpdateEventInput,
     file?: Express.Multer.File
-  ): Promise<EventResponse> {
+  ): Promise<PopulatedEventDocument> {
     normalizeEventInput(event);
     validateEventUpdatedBody(event);
 

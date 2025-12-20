@@ -109,7 +109,7 @@ const eventSchema = new Schema({
   url: {
     type: String,
   },
-  ownerId: {
+  owner: {
     type: Schema.Types.ObjectId,
     ref: "User",
     required: true,

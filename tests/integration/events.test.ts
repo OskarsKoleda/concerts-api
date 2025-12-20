@@ -34,7 +34,7 @@ describe("/api/events", () => {
       city: "city",
       ticketPrice: 1,
       date: "2025-06-19",
-      ownerId: mockedOwnerId,
+      owner: mockedOwnerId,
     };
   });
 
@@ -98,7 +98,7 @@ describe("/api/events", () => {
         city: "city",
         ticketPrice: 1,
         date: date,
-        ownerId: mockedOwnerId,
+        owner: mockedOwnerId,
       };
 
       await EventModel.create(mockedEvent);
@@ -117,7 +117,7 @@ describe("/api/events", () => {
       expect(body.date).toEqual(mockedEvent.date.toISOString());
       expect(body).toHaveProperty("_id");
       expect(body).toHaveProperty("owner");
-      expect(body.owner).toHaveProperty("id");
+      expect(body.owner).toHaveProperty("_id");
       expect(body.owner).toHaveProperty("name");
     });
 
@@ -161,7 +161,7 @@ describe("/api/events", () => {
       expect(body.bands).toEqual(["band 1", "band 2"]);
       expect(body).toHaveProperty("_id");
       expect(body).toHaveProperty("owner");
-      expect(body.owner).toHaveProperty("id");
+      expect(body.owner).toHaveProperty("_id");
       expect(body.owner).toHaveProperty("name");
     });
 
