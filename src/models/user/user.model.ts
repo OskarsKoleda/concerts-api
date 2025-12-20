@@ -28,7 +28,7 @@ userSchema.methods.generateAuthToken = function (): string {
     throw new AppError("JWT private key not configured");
   }
 
-  return jwt.sign({ _id: this.id }, jwtPrivateKey);
+  return jwt.sign({ _id: this.id, name: this.name }, jwtPrivateKey);
 };
 
 export const UserModel = model<UserDocument>("User", userSchema);

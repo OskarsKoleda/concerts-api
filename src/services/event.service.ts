@@ -7,7 +7,6 @@ import {
   EventResponse,
   UpdateEventInput,
 } from "../models/event/event.types";
-import { UserDocument } from "../models/user/user.types";
 import { AppError } from "../utils/AppError";
 import { normalizeEventInput } from "../utils/normalize";
 import { destroyImage, uploadImage } from "./cloudinary/cloudinary.service";
@@ -20,7 +19,6 @@ import {
   updateEventInDb,
 } from "./db/eventDB.service";
 import { EventQueryParams } from "./types";
-import { UserService } from "./user.service";
 import {
   validateEventCreateBody,
   validateEventUpdatedBody,
@@ -31,7 +29,7 @@ import _ from "lodash";
 export class EventService {
   static async createEvent(
     event: CreateEventInput,
-    userData: AuthUserPayload, // TODO: whole userData not needed
+    userData: AuthUserPayload,
     file?: Express.Multer.File
   ): Promise<EventResponse> {
     normalizeEventInput(event);
@@ -39,20 +37,19 @@ export class EventService {
     await ensureUniqueTitle(event.title);
 
     const { public_id, secure_url } = await uploadImage(file);
-    const user: UserDocument = await UserService.getUser(userData._id);
 
     const eventRecord: EventRecord = {
       ...event,
       publicId: public_id,
       url: secure_url,
-      ownerId: user._id.toString(),
+      ownerId: userData._id,
     };
 
     const createdEvent = await createEventInDb(eventRecord);
 
     return {
       ..._.omit(createdEvent, "ownerId"),
-      owner: { id: user._id, name: user.name },
+      owner: { id: userData._id, name: userData.name },
     };
   }
 

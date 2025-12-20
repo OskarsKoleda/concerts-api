@@ -37,7 +37,7 @@ export type UpdateEventInput = Partial<CreateEventInput>;
 // 4. Response layer - what's sent back to the client
 export interface EventResponse extends Omit<EventDocument, "ownerId"> {
   owner: {
-    id: mongo.ObjectId;
+    id: string;
     name: string;
   };
 }

@@ -116,7 +116,7 @@ const addOwnerToEvent = (event: PopulatedEventDocument): EventResponse => {
   return {
     ...rest,
     owner: {
-      id: ownerId._id,
+      id: ownerId._id.toString(),
       name: ownerId.name,
     },
   };
