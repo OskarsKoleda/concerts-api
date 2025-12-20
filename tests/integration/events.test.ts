@@ -258,4 +258,32 @@ describe("/api/events", () => {
       expect(body.message).toBe("Access denied. No token provided.");
     });
   });
+
+  describe("POST /:slug/visit", () => {
+    it("should return NO CONTENT when valid slug is passed", async () => {
+      await EventModel.create(mockedEventToInsert);
+
+      const { status } = await request(app)
+        .post(`/events/${mockedEventToInsert.slug}/visit`)
+        .set("Cookie", [`token=${token}`]);
+
+      expect(status).toBe(204);
+    });
+
+    it("should return NOT FOUND when no events in db", async () => {
+      const { body, status } = await request(app)
+        .post("/events/bad-event/visit")
+        .set("Cookie", [`token=${token}`]);
+
+      expect(status).toBe(404);
+      expect(body.message).toBe("Event not found");
+    });
+
+    it("should return UNAUTHORIZED when no token is provided", async () => {
+      const { body, status } = await request(app).post("/events/title-1/visit");
+
+      expect(status).toBe(401);
+      expect(body.message).toBe("Access denied. No token provided.");
+    });
+  });
 });
