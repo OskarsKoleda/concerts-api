@@ -5,6 +5,8 @@ import {
   getEvents,
   patchEvent,
   postEvent,
+  unvisitEvent,
+  visitEvent,
 } from "../controllers/event.controller";
 import { asyncMiddleware } from "../middleware/async.middleware";
 import { auth } from "../middleware/auth.middleware";
@@ -12,7 +14,7 @@ import { upload } from "../middleware/file.middleware";
 
 const router = Router();
 
-router.get("/", asyncMiddleware(getEvents));
+router.get("/", auth, asyncMiddleware(getEvents));
 router.post(
   "/",
   auth,
@@ -20,7 +22,7 @@ router.post(
   asyncMiddleware(postEvent)
 );
 
-router.get("/:slug", asyncMiddleware(getEvent));
+router.get("/:slug", auth, asyncMiddleware(getEvent));
 router.delete("/:slug", auth, asyncMiddleware(deleteEvent));
 router.patch(
   "/:slug",
@@ -28,5 +30,8 @@ router.patch(
   upload.single("posterImage"),
   asyncMiddleware(patchEvent)
 );
+
+router.post("/:slug/visit", auth, asyncMiddleware(visitEvent));
+router.delete("/:slug/visit", auth, asyncMiddleware(unvisitEvent));
 
 export default router;

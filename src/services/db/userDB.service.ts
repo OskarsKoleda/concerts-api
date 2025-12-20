@@ -32,5 +32,5 @@ export const getUserFromDb = async (userId: string): Promise<UserDocument> => {
     throw new AppError("User not found", 404);
   }
 
-  return user;
+  return user as UserDocument;
 };

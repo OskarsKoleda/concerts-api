@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
+import { AuthenticatedRequest } from "../middleware/auth.types";
 import { EventService } from "../services/event.service";
+import { VisitsService } from "../services/visits.service";
 
 export const getEvent = async (req: Request, res: Response): Promise<void> => {
   const { publicId, ...event } = await EventService.getEvent(req.params.slug);
@@ -13,31 +15,22 @@ export const getEvents = async (req: Request, res: Response): Promise<void> => {
   res.status(200).json(events);
 };
 
-export const postEvent = async (req: Request, res: Response): Promise<void> => {
+export const postEvent = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
   const { body, user, file } = req;
-
-  if (!user) {
-    res.status(401).json({ message: "Unauthorized" });
-
-    return;
-  }
-
   const event = await EventService.createEvent(body, user, file);
 
   res.status(201).json(event);
 };
 
+// TODO: anyone logged in can update any event
 export const patchEvent = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response
 ): Promise<void> => {
   const { body, params, user, file } = req;
-
-  if (!user) {
-    res.status(401).json({ message: "Unauthorized" });
-
-    return;
-  }
 
   const result = await EventService.updateEvent(params.slug, body, file);
 
@@ -46,8 +39,9 @@ export const patchEvent = async (
   }
 };
 
+// TODO: anyone logged in can delete any event
 export const deleteEvent = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response
 ): Promise<void> => {
   const result = await EventService.deleteEvent(req.params.slug);
@@ -55,4 +49,26 @@ export const deleteEvent = async (
   if (result) {
     res.status(204).send();
   }
+};
+
+export const visitEvent = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  const { params, user } = req;
+
+  await VisitsService.addVisit(params.slug, user._id);
+
+  res.status(204).send();
+};
+
+export const unvisitEvent = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  const { params, user } = req;
+
+  await VisitsService.deleteVisit(params.slug, user._id);
+
+  res.status(204).send();
 };

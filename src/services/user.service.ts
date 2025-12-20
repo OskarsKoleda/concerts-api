@@ -12,14 +12,10 @@ export class UserService {
 
     await ensureUniqueEmail(userData.email);
 
-    const user = await createUserInDb(userData);
-
-    return user;
+    return createUserInDb(userData);
   }
 
   static async getUser(userId: string): Promise<UserDocument> {
-    const user = await getUserFromDb(userId);
-
-    return user;
+    return getUserFromDb(userId);
   }
 }

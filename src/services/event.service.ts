@@ -31,7 +31,7 @@ import _ from "lodash";
 export class EventService {
   static async createEvent(
     event: CreateEventInput,
-    userData: AuthUserPayload,
+    userData: AuthUserPayload, // TODO: whole userData not needed
     file?: Express.Multer.File
   ): Promise<EventResponse> {
     normalizeEventInput(event);

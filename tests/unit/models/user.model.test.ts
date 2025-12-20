@@ -1,4 +1,4 @@
-import { UserModel } from "../../../../src/models/user/user.model";
+import { UserModel } from "../../../src/models/user/user.model";
 
 const mockedUser = {
   name: "John Doe",

@@ -73,7 +73,7 @@ export const getEventFromDb = async (slug: string): Promise<EventResponse> => {
     throw new AppError("Event not found", 404);
   }
 
-  return addOwnerToEvent(event);
+  return addOwnerToEvent(event); // TODO: move up?
 };
 
 export const deleteEventFromDb = async (slug: string): Promise<boolean> => {
@@ -107,7 +107,7 @@ export const updateEventInDb = async (
     throw new AppError("Event not found", 404);
   }
 
-  return addOwnerToEvent(updatedEvent);
+  return addOwnerToEvent(updatedEvent); // TODO: move up?
 };
 
 const addOwnerToEvent = (event: PopulatedEventDocument): EventResponse => {

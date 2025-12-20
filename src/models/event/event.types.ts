@@ -3,6 +3,7 @@ import { EventCategory } from "./event.constants";
 
 // 1. Database/Model layer - what's stored in MongoDB
 export interface EventDocument {
+  _id: mongo.ObjectId;
   title: string;
   slug: string;
   category: EventCategory;
