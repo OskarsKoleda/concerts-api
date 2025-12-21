@@ -23,6 +23,7 @@ import {
   validateEventCreateBody,
   validateEventUpdatedBody,
 } from "./validation/eventValidation.service";
+import { VisitsService } from "./visits.service";
 
 export class EventService {
   static async createEvent(
@@ -48,16 +49,32 @@ export class EventService {
     return createdEvent;
   }
 
-  static async getEvent(slug: string): Promise<PopulatedEventDocument> {
+  static async getEvent(
+    slug: string,
+    userId?: string
+  ): Promise<PopulatedEventDocument> {
     const event = await getEventFromDb(slug);
+
+    if (userId) {
+      const isVisited = await VisitsService.isVisited(event._id, userId);
+      event.isVisited = isVisited;
+    }
 
     return event;
   }
 
   static async getEvents(
-    params: EventQueryParams
+    params: EventQueryParams,
+    userId: string
   ): Promise<PopulatedEventDocument[]> {
-    return await getEventsFromDb(params);
+    const events = await getEventsFromDb(params);
+
+    for (let i = 0; i < events.length; i++) {
+      const isVisited = await VisitsService.isVisited(events[i]._id, userId);
+      events[i].isVisited = isVisited;
+    }
+
+    return events;
   }
 
   static async deleteEvent(slug: string): Promise<boolean> {

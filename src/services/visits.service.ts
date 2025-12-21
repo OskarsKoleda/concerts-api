@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { VisitsDocument } from "../models/visits/visits.types";
 import { AppError } from "../utils/AppError";
 import { getEventFromDb } from "./db/eventDB.service";
@@ -24,5 +25,14 @@ export class VisitsService {
     }
 
     await deleteVisitInDb(_id, userId);
+  }
+
+  static async isVisited(
+    eventId: Types.ObjectId,
+    userId: string
+  ): Promise<boolean> {
+    const visit = await getVisitInDb(eventId, userId);
+
+    return !!visit;
   }
 }

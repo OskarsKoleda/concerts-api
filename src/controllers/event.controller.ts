@@ -1,16 +1,27 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { AuthenticatedRequest } from "../middleware/auth.types";
 import { EventService } from "../services/event.service";
 import { VisitsService } from "../services/visits.service";
 
-export const getEvent = async (req: Request, res: Response): Promise<void> => {
-  const { publicId, ...event } = await EventService.getEvent(req.params.slug);
+export const getEvent = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  const { user } = req;
+  const { publicId, ...event } = await EventService.getEvent(
+    req.params.slug,
+    user._id
+  );
 
   res.status(200).json(event);
 };
 
-export const getEvents = async (req: Request, res: Response): Promise<void> => {
-  const events = await EventService.getEvents(req.query);
+export const getEvents = async (
+  req: AuthenticatedRequest,
+  res: Response
+): Promise<void> => {
+  const { user } = req;
+  const events = await EventService.getEvents(req.query, user._id);
 
   res.status(200).json(events);
 };

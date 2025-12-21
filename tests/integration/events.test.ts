@@ -5,9 +5,10 @@ import { EventCategory } from "../../src/models/event/event.constants";
 import { EventModel } from "../../src/models/event/event.model";
 import { EventDocument } from "../../src/models/event/event.types";
 import { UserModel } from "../../src/models/user/user.model";
+import { VisitsModel } from "../../src/models/visits/visits.model";
 import { connectDb } from "../../src/startup/db";
 
-const mockedUser = {
+const mockedUserData = {
   name: "Test User",
   email: "test@example.com",
   age: 30,
@@ -16,17 +17,17 @@ const mockedUser = {
 
 describe("/api/events", () => {
   let mockedOwnerId: mongoose.Types.ObjectId;
+  let mockedEventData: any;
   let token: string;
-  let mockedEventToInsert: any;
 
   beforeAll(async () => {
     await connectDb();
-    const user = await UserModel.create(mockedUser);
+    const user = await UserModel.create(mockedUserData);
 
     mockedOwnerId = user._id;
     token = user.generateAuthToken();
 
-    mockedEventToInsert = {
+    mockedEventData = {
       title: "Title 1",
       slug: "title-1",
       category: EventCategory.MusicConcert,
@@ -50,8 +51,8 @@ describe("/api/events", () => {
   describe("GET /", () => {
     it("should return all events", async () => {
       await EventModel.collection.insertMany([
-        { ...mockedEventToInsert, title: "Title 1", slug: "title-1" },
-        { ...mockedEventToInsert, title: "Title 2", slug: "title-2" },
+        { ...mockedEventData, title: "Title 1", slug: "title-1" },
+        { ...mockedEventData, title: "Title 2", slug: "title-2" },
       ]);
 
       const { body, status } = await request(app)
@@ -72,8 +73,8 @@ describe("/api/events", () => {
 
     it("should return filtered events by title", async () => {
       await EventModel.collection.insertMany([
-        { ...mockedEventToInsert, title: "Title 3", slug: "title-3" },
-        { ...mockedEventToInsert, title: "Title 4", slug: "title-4" },
+        { ...mockedEventData, title: "Title 3", slug: "title-3" },
+        { ...mockedEventData, title: "Title 4", slug: "title-4" },
       ]);
 
       const { body, status } = await request(app)
@@ -84,6 +85,39 @@ describe("/api/events", () => {
       expect(status).toBe(200);
       expect(body.length).toBe(1);
       expect(body[0].title).toBe("Title 4");
+    });
+
+    it("should return events with isVisited=true, if user has visited events", async () => {
+      const { _id: eventId1 } = await EventModel.create({
+        ...mockedEventData,
+        title: "Title 5",
+        slug: "title-5",
+      });
+      const { _id: eventId2 } = await EventModel.create({
+        ...mockedEventData,
+        title: "Title 6",
+        slug: "title-6",
+      });
+
+      await VisitsModel.insertMany([
+        {
+          eventId: eventId1,
+          userId: mockedOwnerId,
+        },
+        {
+          eventId: eventId2,
+          userId: mockedOwnerId,
+        },
+      ]);
+
+      const { body, status } = await request(app)
+        .get("/events")
+        .set("Cookie", [`token=${token}`]);
+
+      expect(status).toBe(200);
+      expect(body.length).toBe(2);
+      expect(body[0].isVisited).toBe(true);
+      expect(body[1].isVisited).toBe(true);
     });
   });
 
@@ -119,6 +153,8 @@ describe("/api/events", () => {
       expect(body).toHaveProperty("owner");
       expect(body.owner).toHaveProperty("_id");
       expect(body.owner).toHaveProperty("name");
+      expect(body).toHaveProperty("isVisited");
+      expect(body.isVisited).toBe(false);
     });
 
     it("should return NOT FOUND when no events in db", async () => {
@@ -128,6 +164,26 @@ describe("/api/events", () => {
 
       expect(status).toBe(404);
       expect(body.message).toBe("Event not found");
+    });
+
+    it("should return isVisited=true when user has visited event", async () => {
+      const { _id: eventId } = await EventModel.create({
+        ...mockedEventData,
+        title: "Title 1",
+        slug: "title-1",
+      });
+
+      await VisitsModel.create({
+        eventId,
+        userId: mockedOwnerId,
+      });
+
+      const { body, status } = await request(app)
+        .get("/events/title-1")
+        .set("Cookie", [`token=${token}`]);
+
+      expect(status).toBe(200);
+      expect(body.isVisited).toBe(true);
     });
   });
 
@@ -193,7 +249,7 @@ describe("/api/events", () => {
 
   describe("DELETE /:slug", () => {
     it("should return NO CONTENT when valid slug is passed", async () => {
-      await EventModel.create(mockedEventToInsert);
+      await EventModel.create(mockedEventData);
 
       const { status } = await request(app)
         .delete("/events/title-1")
@@ -203,7 +259,7 @@ describe("/api/events", () => {
     });
 
     it("should return UNAUTHORIZED when no token is provided", async () => {
-      await EventModel.create(mockedEventToInsert);
+      await EventModel.create(mockedEventData);
 
       const { body, status } = await request(app).delete("/events/title-1");
 
@@ -222,7 +278,7 @@ describe("/api/events", () => {
   });
   describe("PATCH /:slug", () => {
     it("should return OK when valid slug and event data is passed", async () => {
-      await EventModel.create(mockedEventToInsert);
+      await EventModel.create(mockedEventData);
 
       const updatedEventData = { title: "Updated Title" };
 
@@ -237,12 +293,12 @@ describe("/api/events", () => {
     });
 
     it("should return CONFLICT when duplicate title is provided", async () => {
-      await EventModel.create(mockedEventToInsert);
+      await EventModel.create(mockedEventData);
 
-      const updatedEventData = { title: mockedEventToInsert.title };
+      const updatedEventData = { title: mockedEventData.title };
 
       const { body, status } = await request(app)
-        .patch(`/events/${mockedEventToInsert.slug}`)
+        .patch(`/events/${mockedEventData.slug}`)
         .set("Cookie", [`token=${token}`])
         .send(updatedEventData);
 
@@ -251,7 +307,7 @@ describe("/api/events", () => {
     });
 
     it("should return UNAUTHORIZED when no token is provided", async () => {
-      await EventModel.create(mockedEventToInsert);
+      await EventModel.create(mockedEventData);
 
       const updatedEventData = { title: "Updated Title" };
       const { body, status } = await request(app)
@@ -265,10 +321,10 @@ describe("/api/events", () => {
 
   describe("POST /:slug/visit", () => {
     it("should return NO CONTENT when valid slug is passed", async () => {
-      await EventModel.create(mockedEventToInsert);
+      await EventModel.create(mockedEventData);
 
       const { status } = await request(app)
-        .post(`/events/${mockedEventToInsert.slug}/visit`)
+        .post(`/events/${mockedEventData.slug}/visit`)
         .set("Cookie", [`token=${token}`]);
 
       expect(status).toBe(204);
@@ -285,6 +341,41 @@ describe("/api/events", () => {
 
     it("should return UNAUTHORIZED when no token is provided", async () => {
       const { body, status } = await request(app).post("/events/title-1/visit");
+
+      expect(status).toBe(401);
+      expect(body.message).toBe("Access denied. No token provided.");
+    });
+  });
+
+  describe("DELETE /:slug/visit", () => {
+    it("should return NO CONTENT when visit is successfully deleted", async () => {
+      const { _id } = await EventModel.create(mockedEventData);
+
+      await VisitsModel.create({
+        eventId: _id,
+        userId: mockedOwnerId,
+      });
+
+      const { status } = await request(app)
+        .delete(`/events/${mockedEventData.slug}/visit`)
+        .set("Cookie", [`token=${token}`]);
+
+      expect(status).toBe(204);
+    });
+
+    it("should return NOT FOUND when no events in db", async () => {
+      const { body, status } = await request(app)
+        .delete("/events/bad-event/visit")
+        .set("Cookie", [`token=${token}`]);
+
+      expect(status).toBe(404);
+      expect(body.message).toBe("Event not found");
+    });
+
+    it("should return UNAUTHORIZED when no token is provided", async () => {
+      const { body, status } = await request(app).delete(
+        "/events/title-1/visit"
+      );
 
       expect(status).toBe(401);
       expect(body.message).toBe("Access denied. No token provided.");

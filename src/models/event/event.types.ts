@@ -24,6 +24,7 @@ export interface PopulatedEventDocument extends Omit<EventDocument, "owner"> {
     _id: mongo.ObjectId;
     name: string;
   };
+  isVisited?: boolean;
 }
 
 // 3. Input layer - what comes from the client (for creation)
