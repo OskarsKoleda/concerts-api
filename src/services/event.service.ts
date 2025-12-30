@@ -65,13 +65,15 @@ export class EventService {
 
   static async getEvents(
     params: EventQueryParams,
-    userId: string
+    userId?: string
   ): Promise<PopulatedEventDocument[]> {
     const events = await getEventsFromDb(params);
 
-    for (let i = 0; i < events.length; i++) {
-      const isVisited = await VisitsService.isVisited(events[i]._id, userId);
-      events[i].isVisited = isVisited;
+    if (userId) {
+      for (let i = 0; i < events.length; i++) {
+        const isVisited = await VisitsService.isVisited(events[i]._id, userId);
+        events[i].isVisited = isVisited;
+      }
     }
 
     return events;

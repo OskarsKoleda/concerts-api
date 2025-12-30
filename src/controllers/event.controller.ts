@@ -1,27 +1,30 @@
 import { Response } from "express";
-import { AuthenticatedRequest } from "../middleware/auth.types";
+import {
+  AuthenticatedRequest,
+  MaybeAuthenticatedRequest,
+} from "../middleware/auth.types";
 import { EventService } from "../services/event.service";
 import { VisitsService } from "../services/visits.service";
 
 export const getEvent = async (
-  req: AuthenticatedRequest,
+  req: MaybeAuthenticatedRequest,
   res: Response
 ): Promise<void> => {
   const { user } = req;
   const { publicId, ...event } = await EventService.getEvent(
     req.params.slug,
-    user._id
+    user?._id
   );
 
   res.status(200).json(event);
 };
 
 export const getEvents = async (
-  req: AuthenticatedRequest,
+  req: MaybeAuthenticatedRequest,
   res: Response
 ): Promise<void> => {
   const { user } = req;
-  const events = await EventService.getEvents(req.query, user._id);
+  const events = await EventService.getEvents(req.query, user?._id);
 
   res.status(200).json(events);
 };

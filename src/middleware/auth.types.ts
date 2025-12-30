@@ -10,6 +10,10 @@ export interface AuthenticatedRequest extends Request {
   user: AuthUserPayload;
 }
 
+export interface MaybeAuthenticatedRequest extends Request {
+  user?: AuthUserPayload;
+}
+
 declare module "express-serve-static-core" {
   interface Request {
     user?: AuthUserPayload;

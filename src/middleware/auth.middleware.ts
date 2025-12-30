@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import { AuthService } from "../services/auth.service";
+import { AuthUserPayload } from "./auth.types";
 
 const auth = (req: Request, res: Response, next: NextFunction): void => {
   const token: string | undefined = req.cookies.token;
@@ -17,12 +18,37 @@ const auth = (req: Request, res: Response, next: NextFunction): void => {
   } catch (ex) {
     if (process.env.NODE_ENV !== "production") {
       console.error("JWT verification error:", ex);
-    } else {
-      console.error("JWT verification error occurred.");
     }
 
-    res.status(400).json({ message: "Invalid token" });
+    res.status(401).json({ message: "Invalid token" });
   }
 };
 
-export { auth };
+const optionalAuth = (
+  req: Request,
+  _res: Response,
+  next: NextFunction
+): void => {
+  req.user = getAuthenticatedUser(req);
+  next();
+};
+
+const getAuthenticatedUser = (req: Request): AuthUserPayload | undefined => {
+  const token: string | undefined = req.cookies.token;
+
+  if (!token) {
+    return undefined;
+  }
+
+  try {
+    return AuthService.verifyToken(token);
+  } catch (ex) {
+    if (process.env.NODE_ENV !== "production") {
+      console.error("JWT verification error:", ex);
+    }
+
+    return undefined;
+  }
+};
+
+export { auth, optionalAuth };
