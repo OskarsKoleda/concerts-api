@@ -33,3 +33,11 @@ export const deleteVisitInDb = async (
     userId,
   });
 };
+
+export const deleteAllEventVisitsInDb = async (
+  eventId: Types.ObjectId
+): Promise<void> => {
+  await VisitsModel.deleteMany({
+    eventId,
+  });
+};

@@ -18,6 +18,7 @@ import {
   getEventsFromDb,
   updateEventInDb,
 } from "./db/eventDB.service";
+import { deleteAllEventVisitsInDb } from "./db/visitsDB.service";
 import { EventQueryParams } from "./types";
 import {
   validateEventCreateBody,
@@ -88,6 +89,8 @@ export class EventService {
     if (!deleteEventResult) {
       throw new AppError("Could not delete the event", 500);
     }
+
+    await deleteAllEventVisitsInDb(event._id);
 
     if (posterPublicId) {
       await destroyImage(posterPublicId);
