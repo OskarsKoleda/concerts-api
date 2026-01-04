@@ -191,7 +191,7 @@ describe("/api/events", () => {
     const mockedValidEvent = {
       title: "Title 1",
       category: EventCategory.MusicConcert,
-      bands: "band 1,band 2",
+      bands: ["band 1", "band 2"],
       city: "city",
       ticketPrice: 1,
       date: new Date(),
@@ -273,9 +273,40 @@ describe("/api/events", () => {
         .set("Cookie", [`token=${token}`]);
 
       expect(status).toBe(404);
-      expect(body.message).toBe("Event not found");
+      expect(body.message).toBe("Event not found or unauthorized");
+    });
+
+    it("should not allow deleting event if the user is not the owner", async () => {
+      const secondUser = await UserModel.create(mockedUserData);
+      const event = await EventModel.create(mockedEventData);
+
+      const { body, status } = await request(app)
+        .delete(`/events/${event.slug}`)
+        .set("Cookie", [`token=${secondUser.generateAuthToken()}`]);
+
+      expect(status).toBe(404);
+      expect(body.message).toBe("Event not found or unauthorized");
+    });
+
+    it("should delete all visits when event is deleted", async () => {
+      const event = await EventModel.create(mockedEventData);
+
+      await VisitsModel.create({
+        eventId: event._id,
+        userId: mockedOwnerId,
+      });
+
+      const { status } = await request(app)
+        .delete(`/events/${event.slug}`)
+        .set("Cookie", [`token=${token}`]);
+
+      const visits = await VisitsModel.find({ eventId: event._id });
+
+      expect(status).toBe(204);
+      expect(visits).toHaveLength(0);
     });
   });
+
   describe("PATCH /:slug", () => {
     it("should return OK when valid slug and event data is passed", async () => {
       await EventModel.create(mockedEventData);
@@ -316,6 +347,18 @@ describe("/api/events", () => {
 
       expect(status).toBe(401);
       expect(body.message).toBe("Access denied. No token provided.");
+    });
+
+    it("should not allow updating event if the user is not the owner", async () => {
+      const secondUser = await UserModel.create(mockedUserData);
+      const event = await EventModel.create(mockedEventData);
+
+      const { body, status } = await request(app)
+        .patch(`/events/${event.slug}`)
+        .set("Cookie", [`token=${secondUser.generateAuthToken()}`]);
+
+      expect(status).toBe(404);
+      expect(body.message).toBe("Event not found or unauthorized");
     });
   });
 

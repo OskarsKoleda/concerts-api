@@ -7,7 +7,7 @@ export interface EventDocument {
   title: string;
   slug: string;
   category: EventCategory;
-  bands: string[];
+  bands?: string[];
   city: string;
   location?: string;
   ticketPrice: number;
@@ -30,11 +30,15 @@ export interface PopulatedEventDocument extends Omit<EventDocument, "owner"> {
 // 3. Input layer - what comes from the client (for creation)
 export type CreateEventInput = Omit<
   EventDocument,
-  "slug" | "publicId" | "url" | "owner"
->;
+  "_id" | "slug" | "publicId" | "url" | "owner" | "bands"
+> & {
+  bands?: string[];
+};
 
 // 4. Update layer - what comes from the client (for update)
 export type UpdateEventInput = Partial<CreateEventInput>;
 
 // 5. Database operations - what's inserted/updated in DB
-export type EventRecord = Omit<EventDocument, "slug">;
+export type EventRecord = Omit<EventDocument, "_id" | "slug"> & {
+  _id?: mongo.ObjectId | string;
+};

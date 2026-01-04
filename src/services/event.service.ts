@@ -8,7 +8,6 @@ import {
   UpdateEventInput,
 } from "../models/event/event.types";
 import { AppError } from "../utils/AppError";
-import { normalizeEventInput } from "../utils/normalize";
 import { destroyImage, uploadImage } from "./cloudinary/cloudinary.service";
 import {
   createEventInDb,
@@ -32,12 +31,10 @@ export class EventService {
     userData: AuthUserPayload,
     file?: Express.Multer.File
   ): Promise<PopulatedEventDocument> {
-    normalizeEventInput(event);
     validateEventCreateBody(event);
     await ensureUniqueTitle(event.title);
 
     const { public_id, secure_url } = await uploadImage(file);
-
     const eventRecord: EventRecord = {
       ...event,
       publicId: public_id,
@@ -80,20 +77,17 @@ export class EventService {
     return events;
   }
 
-  static async deleteEvent(slug: string): Promise<boolean> {
-    const event = await this.getEvent(slug);
-    const posterPublicId: string | undefined = event.publicId;
-
-    const deleteEventResult = await deleteEventFromDb(slug);
+  static async deleteEvent(slug: string, userId: string): Promise<boolean> {
+    const deleteEventResult = await deleteEventFromDb(slug, userId);
 
     if (!deleteEventResult) {
-      throw new AppError("Could not delete the event", 500);
+      throw new AppError("Event not found or unauthorized", 404);
     }
 
-    await deleteAllEventVisitsInDb(event._id);
+    await deleteAllEventVisitsInDb(deleteEventResult._id);
 
-    if (posterPublicId) {
-      await destroyImage(posterPublicId);
+    if (deleteEventResult.publicId) {
+      await destroyImage(deleteEventResult.publicId);
     }
 
     return true;
@@ -102,24 +96,32 @@ export class EventService {
   static async updateEvent(
     slug: string,
     event: UpdateEventInput,
+    userId: string,
     file?: Express.Multer.File
   ): Promise<PopulatedEventDocument> {
-    normalizeEventInput(event);
+    const currentEvent = await this.getEvent(slug);
+
+    if (currentEvent.owner._id.toString() !== userId) {
+      throw new AppError("Event not found or unauthorized", 404);
+    }
+
     validateEventUpdatedBody(event);
 
-    let fieldsToUpdate: Partial<EventDocument> = { ...event };
+    let fieldsToUpdate: Partial<EventDocument> = {
+      ...(event as unknown as Partial<EventDocument>),
+    };
 
     if (event.title) {
       await ensureUniqueTitle(event.title);
-      fieldsToUpdate.slug = slugify(event.title, { lower: true, strict: true });
+      fieldsToUpdate.slug = slugify(event.title, {
+        lower: true,
+        strict: true,
+      });
     }
 
     if (file) {
-      const currentEvent = await this.getEvent(slug);
-      const posterPublicId: string | undefined = currentEvent.publicId;
-
-      if (posterPublicId) {
-        await destroyImage(posterPublicId);
+      if (currentEvent.publicId) {
+        await destroyImage(currentEvent.publicId);
       }
 
       const { public_id, secure_url } = await uploadImage(file);
@@ -128,6 +130,6 @@ export class EventService {
       fieldsToUpdate.url = secure_url;
     }
 
-    return await updateEventInDb(slug, fieldsToUpdate);
+    return await updateEventInDb(slug, fieldsToUpdate, userId);
   }
 }

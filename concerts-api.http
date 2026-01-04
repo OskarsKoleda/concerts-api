@@ -47,7 +47,7 @@ POST http://localhost:3000/events
 Content-Type: application/json
 
 {
-  "title": "Graspop 9991",
+  "title": "Graspop Testing",
   "category": "Music Festival",
   "bands": ["Dethklok", "Slipknot"],
   "city": "Desel",
@@ -59,16 +59,16 @@ Content-Type: application/json
 
 ###
 # @name updateEvent
-PATCH http://localhost:3000/events/alestorm-european-tour-2023
+PATCH http://localhost:3000/events/graspop-99911
 Content-Type: application/json
 
 {
-  "ticketPrice": 500
+  "ticketPrice": 123
 }
 
 ###
 # @name deleteEvent
-DELETE http://localhost:3000/events/alestorm-european-tour-2023
+DELETE http://localhost:3000/events/graspop-99911
 
 
 ###

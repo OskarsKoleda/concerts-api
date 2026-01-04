@@ -45,20 +45,23 @@ export const patchEvent = async (
   res: Response
 ): Promise<void> => {
   const { body, params, user, file } = req;
-
-  const result = await EventService.updateEvent(params.slug, body, file);
+  const result = await EventService.updateEvent(
+    params.slug,
+    body,
+    user._id,
+    file
+  );
 
   if (result) {
     res.status(200).json(result);
   }
 };
 
-// TODO: anyone logged in can delete any event
 export const deleteEvent = async (
   req: AuthenticatedRequest,
   res: Response
 ): Promise<void> => {
-  const result = await EventService.deleteEvent(req.params.slug);
+  const result = await EventService.deleteEvent(req.params.slug, req.user._id);
 
   if (result) {
     res.status(204).send();

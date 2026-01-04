@@ -1,6 +1,7 @@
 import slugify from "slugify";
 import { EventModel } from "../../models/event/event.model";
 import {
+  EventDocument,
   EventRecord,
   PopulatedEventDocument,
 } from "../../models/event/event.types";
@@ -81,24 +82,23 @@ export const getEventFromDb = async (
   return event;
 };
 
-export const deleteEventFromDb = async (slug: string): Promise<boolean> => {
-  const event = await EventModel.findOne({ slug });
-
-  if (!event) {
-    throw new AppError("Event not found", 404);
-  }
-
-  const deletedEvent = await event.deleteOne();
-
-  return deletedEvent.acknowledged;
+export const deleteEventFromDb = async (
+  slug: string,
+  ownerId: string
+): Promise<EventDocument | null> => {
+  return await EventModel.findOneAndDelete({
+    slug,
+    owner: ownerId,
+  }).lean();
 };
 
 export const updateEventInDb = async (
   slug: string,
-  event: Partial<EventRecord>
+  event: Partial<EventRecord>,
+  ownerId: string
 ): Promise<PopulatedEventDocument> => {
   const updatedEvent = await EventModel.findOneAndUpdate(
-    { slug: slug },
+    { slug, owner: ownerId },
     { $set: event },
     { new: true }
   )
