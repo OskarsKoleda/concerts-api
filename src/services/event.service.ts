@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import slugify from "slugify";
 import { AuthUserPayload } from "../middleware/auth.types";
 import {
@@ -39,7 +40,7 @@ export class EventService {
       ...event,
       publicId: public_id,
       url: secure_url,
-      owner: userData._id,
+      owner: new Types.ObjectId(userData._id),
     };
 
     const createdEvent = await createEventInDb(eventRecord);
@@ -130,6 +131,10 @@ export class EventService {
       fieldsToUpdate.url = secure_url;
     }
 
-    return await updateEventInDb(slug, fieldsToUpdate, userId);
+    return await updateEventInDb(
+      currentEvent._id.toString(),
+      userId,
+      fieldsToUpdate
+    );
   }
 }

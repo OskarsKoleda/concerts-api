@@ -93,12 +93,12 @@ export const deleteEventFromDb = async (
 };
 
 export const updateEventInDb = async (
-  slug: string,
-  event: Partial<EventRecord>,
-  ownerId: string
+  eventId: string,
+  ownerId: string,
+  event: Partial<EventRecord>
 ): Promise<PopulatedEventDocument> => {
   const updatedEvent = await EventModel.findOneAndUpdate(
-    { slug, owner: ownerId },
+    { _id: eventId, owner: ownerId },
     { $set: event },
     { new: true }
   )

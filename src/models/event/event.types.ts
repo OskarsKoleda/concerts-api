@@ -1,4 +1,4 @@
-import { mongo } from "mongoose";
+import { mongo, Types } from "mongoose";
 import { EventCategory } from "./event.constants";
 
 // 1. Database/Model layer - what's stored in MongoDB
@@ -15,7 +15,7 @@ export interface EventDocument {
   endDate?: Date;
   publicId?: string;
   url?: string;
-  owner: string;
+  owner: Types.ObjectId;
 }
 
 // 2. Response layer - what's sent back to the client
