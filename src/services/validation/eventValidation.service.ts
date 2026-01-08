@@ -1,12 +1,17 @@
-import { CreateEventInput } from "../../models/event/event.types";
+import {
+  CreateEventInput,
+  UpdateEventInput,
+} from "../../models/event/event.types";
 import {
   validateEventPatch,
   validateEventPost,
 } from "../../RESTValidators/event.validator";
 import { AppError } from "../../utils/AppError";
 
-export const validateEventCreateBody = (event: CreateEventInput) => {
-  const { error } = validateEventPost(event);
+export const validateEventCreateBody = (
+  event: CreateEventInput
+): CreateEventInput => {
+  const { error, value } = validateEventPost(event);
 
   if (error) {
     throw new AppError(
@@ -14,10 +19,14 @@ export const validateEventCreateBody = (event: CreateEventInput) => {
       400
     );
   }
+
+  return value;
 };
 
-export const validateEventUpdatedBody = (event: Partial<CreateEventInput>) => {
-  const { error } = validateEventPatch(event);
+export const validateEventUpdatedBody = (
+  event: Partial<CreateEventInput>
+): UpdateEventInput => {
+  const { error, value } = validateEventPatch(event);
 
   if (error) {
     throw new AppError(
@@ -25,4 +34,6 @@ export const validateEventUpdatedBody = (event: Partial<CreateEventInput>) => {
       400
     );
   }
+
+  return value;
 };

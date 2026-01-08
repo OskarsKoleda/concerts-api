@@ -32,12 +32,12 @@ export class EventService {
     userData: AuthUserPayload,
     file?: Express.Multer.File
   ): Promise<PopulatedEventDocument> {
-    validateEventCreateBody(event);
-    await ensureUniqueTitle(event.title);
+    const validatedEvent = validateEventCreateBody(event);
+    await ensureUniqueTitle(validatedEvent.title);
 
     const { public_id, secure_url } = await uploadImage(file);
     const eventRecord: EventRecord = {
-      ...event,
+      ...validatedEvent,
       publicId: public_id,
       url: secure_url,
       owner: new Types.ObjectId(userData._id),

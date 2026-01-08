@@ -128,11 +128,10 @@ describe("validateEvent should fail event validation, when", () => {
     expect(error?.message).toBe("At least one band is required");
   });
 
-  it("bands is not an array", async () => {
+  it("should fail when bands is an invalid type (object)", async () => {
     const event = { ...mockedValidEvent, bands: { aaa: "bbb" } };
     const { error } = validateEventPost(event as any);
-
-    expect(error?.message).toBe("Bands must be an array");
+    expect(error?.message).toBe("Band name must be a string");
   });
 
   // CITY

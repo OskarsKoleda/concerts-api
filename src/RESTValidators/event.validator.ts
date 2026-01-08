@@ -48,6 +48,7 @@ const schema = Joi.object({
           "string.max": "Band name must be at most 255 characters",
         })
       )
+      .single()
       .min(1)
       .required()
       .messages({
