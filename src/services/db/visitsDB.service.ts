@@ -21,7 +21,7 @@ export const getVisitInDb = async (
   return await VisitsModel.findOne({
     eventId,
     userId,
-  });
+  }).exec();
 };
 
 export const deleteVisitInDb = async (
@@ -31,7 +31,7 @@ export const deleteVisitInDb = async (
   await VisitsModel.deleteOne({
     eventId,
     userId,
-  });
+  }).exec();
 };
 
 export const deleteAllEventVisitsInDb = async (
@@ -39,5 +39,5 @@ export const deleteAllEventVisitsInDb = async (
 ): Promise<void> => {
   await VisitsModel.deleteMany({
     eventId,
-  });
+  }).exec();
 };

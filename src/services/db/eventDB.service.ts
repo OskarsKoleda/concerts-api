@@ -11,7 +11,7 @@ import { EventQueryParams } from "../types";
 export const ensureUniqueTitle = async (title: string): Promise<void> => {
   const slug = slugify(title, { lower: true, strict: true });
 
-  const existingEvent = await EventModel.findOne({ slug });
+  const existingEvent = await EventModel.findOne({ slug }).exec();
 
   if (existingEvent) {
     throw new AppError("Event with this title already exists", 409);
@@ -58,7 +58,8 @@ export const getEventsFromDb = async (
       path: "owner",
       select: "name _id",
     })
-    .lean<PopulatedEventDocument[]>();
+    .lean<PopulatedEventDocument[]>()
+    .exec();
 
   return events;
 };
@@ -73,7 +74,8 @@ export const getEventFromDb = async (
       path: "owner",
       select: "name _id",
     })
-    .lean<PopulatedEventDocument>();
+    .lean<PopulatedEventDocument>()
+    .exec();
 
   if (!event) {
     throw new AppError("Event not found", 404);
@@ -89,7 +91,9 @@ export const deleteEventFromDb = async (
   return await EventModel.findOneAndDelete({
     slug,
     owner: ownerId,
-  }).lean();
+  })
+    .lean()
+    .exec();
 };
 
 export const updateEventInDb = async (
@@ -106,7 +110,8 @@ export const updateEventInDb = async (
       path: "owner",
       select: "name _id",
     })
-    .lean<PopulatedEventDocument>();
+    .lean<PopulatedEventDocument>()
+    .exec();
 
   if (!updatedEvent) {
     throw new AppError("Event not found", 404);

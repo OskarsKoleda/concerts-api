@@ -79,3 +79,7 @@ POST http://localhost:3000/events/alestorm-european-tour-2023/visit
 ###
 # @name deleteVisit
 DELETE http://localhost:3000/events/alestorm-european-tour-2023/visit
+
+################################################
+# @name getUserStats
+GET http://localhost:3000/users/me/stats

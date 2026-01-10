@@ -15,4 +15,20 @@ interface UserLoginFields {
   password: string;
 }
 
-export { UserDocument, UserLoginFields, UserModelFields };
+type UserStats = {
+  totalVisits: number;
+  totalSpent: number;
+  avgSpent: number;
+  maxSpent: number;
+  minSpent: number;
+  uniqueBandsSeenCount: number;
+  uniqueCitiesSeenCount: number;
+  uniqueVenuesSeenCount: number;
+  uniqueYearsSeenCount: number;
+  bandCounts: Record<string, number>;
+  cityCounts: Record<string, number>;
+  venueCounts: Record<string, number>;
+  yearCounts: Record<string, number>;
+};
+
+export { UserDocument, UserLoginFields, UserModelFields, UserStats };

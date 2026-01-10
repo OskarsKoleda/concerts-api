@@ -34,3 +34,21 @@ export const getUser = async (req: Request, res: Response): Promise<void> => {
 
   res.status(200).json({ id: _id, name, email, age });
 };
+
+// TODO: add tests
+export const getUserStats = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const userId = req.user?._id;
+
+  if (!userId) {
+    res.status(400).json({ message: "User ID is missing in request" });
+
+    return;
+  }
+
+  const stats = await UserService.getUserStats(userId);
+
+  res.status(200).json(stats);
+};

@@ -16,7 +16,7 @@ export const authenticateUser = async (
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 3600000,
+      maxAge: 5 * 60 * 60 * 1000,
     })
     .json({
       id: user._id,
