@@ -170,26 +170,26 @@ describe("validateEvent should fail event validation, when", () => {
     expect(error?.message).toBe("City is required");
   });
 
-  // LOCATION
-  it("location is a number", async () => {
-    const event = { ...mockedValidEvent, location: 1 };
+  // VENUE
+  it("venue is a number", async () => {
+    const event = { ...mockedValidEvent, venue: 1 };
     const { error } = validateEventPost(event as any);
 
-    expect(error?.message).toBe("Location must be a string");
+    expect(error?.message).toBe("Venue must be a string");
   });
 
-  it("location is less than 3 characters", async () => {
-    const event = { ...mockedValidEvent, location: "aa" };
+  it("venue is less than 3 characters", async () => {
+    const event = { ...mockedValidEvent, venue: "aa" };
     const { error } = validateEventPost(event);
 
-    expect(error?.message).toBe("Location must be at least 3 characters");
+    expect(error?.message).toBe("Venue must be at least 3 characters");
   });
 
-  it("location is more than 255 characters", async () => {
-    const event = { ...mockedValidEvent, location: Array(257).join("a") };
+  it("venue is more than 255 characters", async () => {
+    const event = { ...mockedValidEvent, venue: Array(257).join("a") };
     const { error } = validateEventPost(event);
 
-    expect(error?.message).toBe("Location must be at most 255 characters");
+    expect(error?.message).toBe("Venue must be at most 255 characters");
   });
 
   // TICKET PRICE

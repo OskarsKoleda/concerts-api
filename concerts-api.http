@@ -51,7 +51,7 @@ Content-Type: application/json
   "category": "Music Festival",
   "bands": ["Dethklok", "Slipknot"],
   "city": "Desel",
-  "location": "Field",
+  "venue": "Field",
   "ticketPrice": 309,
   "date": "2025-06-19",
   "endDate": "2025-06-20"

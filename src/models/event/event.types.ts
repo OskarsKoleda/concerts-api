@@ -9,7 +9,7 @@ export interface EventDocument {
   category: EventCategory;
   bands?: string[];
   city: string;
-  location?: string;
+  venue?: string;
   ticketPrice: number;
   date: Date;
   endDate?: Date;

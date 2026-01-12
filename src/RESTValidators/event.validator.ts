@@ -67,10 +67,10 @@ const schema = Joi.object({
     "string.max": "City must be at most 255 characters",
     "any.required": "City is required",
   }),
-  location: Joi.string().min(3).max(255).messages({
-    "string.base": "Location must be a string",
-    "string.min": "Location must be at least 3 characters",
-    "string.max": "Location must be at most 255 characters",
+  venue: Joi.string().min(3).max(255).messages({
+    "string.base": "Venue must be a string",
+    "string.min": "Venue must be at least 3 characters",
+    "string.max": "Venue must be at most 255 characters",
   }),
   ticketPrice: Joi.number().required().min(0).max(999).messages({
     "number.base": "Ticket Price must be a number",

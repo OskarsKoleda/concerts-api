@@ -15,7 +15,7 @@ interface UserLoginFields {
   password: string;
 }
 
-type UserStats = {
+interface UserStats {
   totalVisits: number;
   totalSpent: number;
   avgSpent: number;
@@ -24,11 +24,11 @@ type UserStats = {
   uniqueBandsSeenCount: number;
   uniqueCitiesSeenCount: number;
   uniqueVenuesSeenCount: number;
-  uniqueYearsSeenCount: number;
+  categoryCounts: Record<string, number>;
   bandCounts: Record<string, number>;
   cityCounts: Record<string, number>;
   venueCounts: Record<string, number>;
   yearCounts: Record<string, number>;
-};
+}
 
 export { UserDocument, UserLoginFields, UserModelFields, UserStats };

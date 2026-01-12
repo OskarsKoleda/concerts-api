@@ -140,21 +140,21 @@ describe("eventSchema should throw a validation error, when", () => {
     );
   });
 
-  // LOCATION
-  it("location is shorter than 3 characters", async () => {
-    const event = new EventModel({ ...mockedEvent, location: "A" });
+  // VENUE
+  it("venue is shorter than 3 characters", async () => {
+    const event = new EventModel({ ...mockedEvent, venue: "A" });
 
     await expect(event.save()).rejects.toThrow(
-      "Event validation failed: location: Path `location` (`A`) is shorter than the minimum allowed length (3)."
+      "Event validation failed: venue: Path `venue` (`A`) is shorter than the minimum allowed length (3)."
     );
   });
 
-  it("location is longer than 255 characters", async () => {
-    const longLocation = "L".repeat(256);
-    const event = new EventModel({ ...mockedEvent, location: longLocation });
+  it("venue is longer than 255 characters", async () => {
+    const longVenue = "L".repeat(256);
+    const event = new EventModel({ ...mockedEvent, venue: longVenue });
 
     await expect(event.save()).rejects.toThrow(
-      `Event validation failed: location: Path \`location\` (\`${longLocation}\`) is longer than the maximum allowed length (255).`
+      `Event validation failed: venue: Path \`venue\` (\`${longVenue}\`) is longer than the maximum allowed length (255).`
     );
   });
 

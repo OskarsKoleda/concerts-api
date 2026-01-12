@@ -65,7 +65,7 @@ const eventSchema = new Schema({
     minlength: 3,
     maxlength: 255,
   },
-  location: {
+  venue: {
     type: String,
     minlength: 3,
     maxlength: 255,

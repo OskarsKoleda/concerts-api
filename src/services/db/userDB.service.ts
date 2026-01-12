@@ -71,10 +71,10 @@ export const getUserStatsFromDb = async (
     avgSpent: { $avg: "$event.ticketPrice" },
     maxSpent: { $max: "$event.ticketPrice" },
     minSpent: { $min: "$event.ticketPrice" },
-    allBandsSeen: { $addToSet: "$event.bands" }, // returns [["A", "B"], ["A", "C"]]
+    allBandsSeen: { $push: "$event.bands" }, // returns [["A", "B"], ["A", "C"]]
     allCategories: { $push: "$event.category" },
     allCities: { $push: "$event.city" },
-    allVenues: { $push: "$event.location" },
+    allVenues: { $push: "$event.venue" },
     allYears: { $push: { $year: "$event.date" } },
   });
 
@@ -238,7 +238,7 @@ export const getUserStatsFromDb = async (
       uniqueBandsSeenCount: 0,
       uniqueCitiesSeenCount: 0,
       uniqueVenuesSeenCount: 0,
-      uniqueYearsSeenCount: 0,
+      categoryCounts: {},
       bandCounts: {},
       cityCounts: {},
       venueCounts: {},
